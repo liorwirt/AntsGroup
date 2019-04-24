@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
 import numpy as np
-from AntenaProject.Common.Maze.BaseMazeParser import BaseMazeParser
+from AntenaProject.Common.Maze.Parsers.BaseMazeParser import BaseMazeParser
 import os.path
 
 

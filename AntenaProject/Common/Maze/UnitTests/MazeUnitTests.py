@@ -1,9 +1,9 @@
 from unittest import  TestCase
 
-import numpy as np
-from AntenaProject.Common.Maze.DummyMazeParser import DummyMazeParser
-from AntenaProject.Common.Maze.FixedMazeParser import FixedMazeParser
-from AntenaProject.Common.Maze.FileMazeParser import FileMazeParser
+from AntenaProject.Common.Maze.Parsers.DummyMazeParser import DummyMazeParser
+from AntenaProject.Common.Maze.Parsers.FixedMazeParser import FixedMazeParser
+from AntenaProject.Common.Maze.Parsers.FileMazeParser import FileMazeParser
+from AntenaProject.Common.Maze.Facades.MazeFacade import MazeFacade
 
 class TestMazeParserDummy(TestCase):
     def test_dummy_dims(self):
@@ -82,3 +82,42 @@ class TestMazeParserFile(TestCase):
         mazeparser =FileMazeParser("map_regular.txt")
         matrix = mazeparser.GetMatrix()
         self.assertTrue(matrix[28][30] == 0)
+
+class TestMazeFacade(TestCase):
+    def setUp(self):
+        self.__mazeparser = FileMazeParser("map_regular.txt")
+
+
+    def test_MazeFacade_NotEmpty(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertTrue(mazeFacade.GetMatrix().any())
+
+    def test_MazeFacade_Dims(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+
+        self.assertTrue(mazeFacade.GetDims() == (31, 31))
+
+    def test_MazeFacade_Entrence(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertTrue(mazeFacade.GetEnterence() == (0, 0))
+
+    def test_MazeFacade_mayMove_True_1(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertTrue(mazeFacade.MayMove(src=(0,0),dst=(1,0)))
+
+    def test_MazeFacade_mayMove_True_2(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertTrue(mazeFacade.MayMove(src=(14,8),dst=(15,8)))
+
+    def test_MazeFacade_mayMove_False_Node_Not_InGrpah(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertFalse(mazeFacade.MayMove(src=(2, 1), dst=(2, 2)))
+
+    def test_MazeFacade_mayMove_False_Path_Too_Long(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertFalse(mazeFacade.MayMove(src=(2, 1), dst=(2, 6)))
+
+    def test_MazeFacade_mayMove_SamePoint(self):
+        mazeFacade = MazeFacade(self.__mazeparser)
+        self.assertTrue(mazeFacade.MayMove(src=(0,0),dst=(0,0)))
+
