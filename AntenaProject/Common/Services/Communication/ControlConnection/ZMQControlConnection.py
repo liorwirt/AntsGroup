@@ -10,12 +10,10 @@ class ZMQControlConnection(BaseControlConnection):
 
     def _BuildConnection(self):
         context = zmq.Context()
-        self.__socket = context.socket(zmq.REQ)
-        self.__socket.connect("tcp://localhost:%s" % self.__zmqcontrolport)
-    def _SendStatus(self,jsonDict):
-        self.__socket.send_json(jsonDict)
-        self.__socket.recv()
-        j=9
+        self.__socket = context.socket(zmq.PUB)
+        self.__socket.bind("tcp://*:%s" % self.__zmqcontrolport)
+    def _SendStatus(self,msg):
+        self.__socket.send_pyobj(msg)
 
 
     def _CloseConnection(self):

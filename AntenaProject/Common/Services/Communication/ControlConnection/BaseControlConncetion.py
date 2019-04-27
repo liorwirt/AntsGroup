@@ -40,7 +40,7 @@ class BaseControlConnection(ABC):
             time.sleep(1)
             with lock:
                 if BrodcastCondition == True:
-                    self._SendStatus(statusmessege.Dict_Representation)
+                    self._SendStatus(statusmessege)
                 else:
                     self._CloseConnection()
                     break
