@@ -2,11 +2,12 @@ from abc import ABC, abstractmethod
 
 import sys
 from AntenaProject.Common.Services.Communication.ConnectionBuilder import ConnectionBuilder
-
+from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 
 class BaseService(ABC):
-    def __init__(self,id,**kwargs):
+    def __init__(self,id,config,**kwargs):
         self.__id=id
+        self.__config=config
         self.__Connection=None
         sys.excepthook = self.except_hook
         self.__Connection=ConnectionBuilder.CreateControlConnection(id,kwargs)
