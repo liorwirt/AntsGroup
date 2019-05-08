@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from typing import Tuple,List
-coordinate = Tuple[int,int]
-coordinates=List[coordinate]
+from AntenaProject.Common.AntsBasicStructures.Position import Position
+
+coordinates=List[Position]
 
 class BaseMazeParser(ABC):
 
@@ -13,7 +14,7 @@ class BaseMazeParser(ABC):
 
     @property
     @abstractmethod
-    def GetEnterence(self)->coordinate:
+    def GetEnterence(self)->Position:
         pass
 
     @property
@@ -22,5 +23,10 @@ class BaseMazeParser(ABC):
         pass
     @property
     @abstractmethod
-    def GetDims(self)->coordinate:
+    def GetDims(self)->(int,int):
+        pass
+
+    @property
+    @abstractmethod
+    def GetName(self):
         pass

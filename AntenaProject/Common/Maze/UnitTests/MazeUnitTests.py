@@ -1,5 +1,5 @@
 from unittest import  TestCase
-
+from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.Maze.Parsers.DummyMazeParser import DummyMazeParser
 from AntenaProject.Common.Maze.Parsers.FixedMazeParser import FixedMazeParser
 from AntenaProject.Common.Maze.Parsers.FileMazeParser import FileMazeParser
@@ -25,13 +25,13 @@ class TestMazeParserFixed(TestCase):
 
     def test_Fixed_Entrence(self):
         mazeparser = FixedMazeParser()
-        self.assertTrue(mazeparser.GetEnterence()==(0,0))
+        self.assertTrue(mazeparser.GetEnterence()==Position(0,0))
 
     def test_Fixed_Exits(self):
         mazeparser = FixedMazeParser()
         exits=mazeparser.GetExits()
-        self.assertTrue(exits[0]==(4,4))
-        self.assertTrue(exits[1] == (4, 2))
+        self.assertTrue(exits[0]==Position(4,4))
+        self.assertTrue(exits[1] == Position(4, 2))
 
     def test_Fixed_Obs(self):
         mazeparser = FixedMazeParser()
@@ -54,13 +54,13 @@ class TestMazeParserFile(TestCase):
 
     def test_File_Entrence(self):
         mazeparser = FileMazeParser("map_regular.txt")
-        self.assertTrue(mazeparser.GetEnterence()==(0,0))
+        self.assertTrue(mazeparser.GetEnterence()==Position(0,0))
 
     def test_File__many_Exits(self):
         mazeparser =FileMazeParser("map_ManyExits.txt")
         exits=mazeparser.GetExits()
-        self.assertTrue(len(exits[0]) >1)
-        self.assertTrue(exits[0]==(4,0))
+        self.assertTrue(len(exits) >1)
+        self.assertTrue(exits[0]==Position(4,0))
 
     def test_File__NoEntrence(self):
         with self.assertRaises(Exception) as context:
@@ -99,25 +99,25 @@ class TestMazeFacade(TestCase):
 
     def test_MazeFacade_Entrence(self):
         mazeFacade = MazeFacade(self.__mazeparser)
-        self.assertTrue(mazeFacade.GetEnterence() == (0, 0))
+        self.assertTrue(mazeFacade.GetEnterence() == Position(0, 0))
 
     def test_MazeFacade_mayMove_True_1(self):
         mazeFacade = MazeFacade(self.__mazeparser)
-        self.assertTrue(mazeFacade.MayMove(src=(0,0),dst=(1,0)))
+        self.assertTrue(mazeFacade.MayMove(src=Position(0,0),dst=Position(1,0)))
 
     def test_MazeFacade_mayMove_True_2(self):
         mazeFacade = MazeFacade(self.__mazeparser)
-        self.assertTrue(mazeFacade.MayMove(src=(14,8),dst=(15,8)))
+        self.assertTrue(mazeFacade.MayMove(src=Position(14,8),dst=Position(15,8)))
 
     def test_MazeFacade_mayMove_False_Node_Not_InGrpah(self):
         mazeFacade = MazeFacade(self.__mazeparser)
-        self.assertFalse(mazeFacade.MayMove(src=(2, 1), dst=(2, 2)))
+        self.assertFalse(mazeFacade.MayMove(src=Position(2, 1), dst=Position(2, 2)))
 
     def test_MazeFacade_mayMove_False_Path_Too_Long(self):
         mazeFacade = MazeFacade(self.__mazeparser)
-        self.assertFalse(mazeFacade.MayMove(src=(2, 1), dst=(2, 6)))
+        self.assertFalse(mazeFacade.MayMove(src=Position(2, 1), dst=Position(2, 6)))
 
     def test_MazeFacade_mayMove_SamePoint(self):
         mazeFacade = MazeFacade(self.__mazeparser)
-        self.assertTrue(mazeFacade.MayMove(src=(0,0),dst=(0,0)))
+        self.assertTrue(mazeFacade.MayMove(src=Position(0,0),dst=Position(0,0)))
 

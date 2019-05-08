@@ -1,5 +1,6 @@
 import numpy as np
 from AntenaProject.Common.Maze.Parsers.BaseMazeParser import BaseMazeParser
+from AntenaProject.Common.AntsBasicStructures.Position import Position
 
 class FixedMazeParser(BaseMazeParser):
 
@@ -9,8 +10,8 @@ class FixedMazeParser(BaseMazeParser):
         self.__Maze[2][1] = 0
         self.__Maze[0][3] = 0
         self.__Maze[2][3] = 0
-        self.__Enterence=(0,0)
-        self.__Exits = [(4, 4),(4,2)]
+        self.__Enterence=Position(0,0)
+        self.__Exits = [Position(4, 4),Position(4,2)]
     def GetMatrix(self)->np.ndarray:
         return self.__Maze
 
@@ -22,3 +23,6 @@ class FixedMazeParser(BaseMazeParser):
 
     def GetDims(self):
         return (5,5)
+
+    def GetName(self):
+        return "Fixed Testing Maze"

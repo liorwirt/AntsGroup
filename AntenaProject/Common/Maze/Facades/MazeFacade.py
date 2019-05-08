@@ -1,6 +1,7 @@
 import numpy as np
 from AntenaProject.Common.Maze.Parsers.BaseMazeParser import BaseMazeParser
 import networkx as nx
+from AntenaProject.Common.AntsBasicStructures.Position import Position
 from networkx.readwrite import json_graph
 
 class MazeFacade(object):
@@ -17,8 +18,8 @@ class MazeFacade(object):
         return self.__MazeParser.GetExits()
     def GetDims(self):
         return self.__MazeParser.GetDims()
-    def MayMove(self,src:(int,int),dst:(int,int)):
-        if(src[0]==dst[0] and src[1]==dst[1]):
+    def MayMove(self,src:Position,dst:Position):
+        if(src==dst):
             return True
         try:
             path=self.__GetPath(src,dst)
@@ -31,11 +32,15 @@ class MazeFacade(object):
     def ConnectivityGraph(self):
         return self.__Graph
 
-    def __GetPath(self,src:(int,int),dst:(int,int)):
+    @property
+    def Name(self):
+        return self.__MazeParser.GetName
+
+    def __GetPath(self,src:Position,dst:Position):
 
         width, height = self.__MazeParser.GetDims()
-        path = nx.shortest_path(self.__Graph, self.__ToGridNode(src[0],src[1], height),
-                                self.__ToGridNode(dst[0],dst[1], height))
+        path = nx.shortest_path(self.__Graph, self.__ToGridNode(src.X,src.Y, height),
+                                self.__ToGridNode(dst.X,dst.Y, height))
         realpath = []
         for cord in path:
             x = self.__Graph.nodes[cord]["X"]
