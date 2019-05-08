@@ -1,8 +1,9 @@
 from abc import abstractmethod,ABC
 from typing import List
+from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt
 class BasicAntProducer(ABC):
-    def __init__(self,config):
+    def __init__(self,config:BaseConfigProvider):
         self._Config=config
         self._CurrentAnt=None
 

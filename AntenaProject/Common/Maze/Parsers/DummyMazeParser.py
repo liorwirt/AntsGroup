@@ -16,5 +16,9 @@ class DummyMazeParser(BaseMazeParser):
     def GetDims(self):
         return (0,0)
 
+
+    def IsObs(self,position:Position)->bool:
+        return False
+
     def GetName(self):
         return "Dummy"

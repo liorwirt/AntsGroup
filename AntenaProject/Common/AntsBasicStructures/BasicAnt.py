@@ -5,20 +5,25 @@ from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import Bas
 from typing import Tuple
 class BasicAnt(ABC):
     def __init__(self,id:int,config):
-        self.__Config=config
-        self.__ID=id
-        self.__CurrentPosition=Position.GetEmptyPoistion()
+        self._Config=config
+        self._ID=id
+        self._CurrentPosition=Position.GetEmptyPoistion()
 
 
     @property
     def ID(self):
-        return self.__ID
+        return self._ID
+
+    @property
+    def CurrentPosition(self):
+        return self._CurrentPosition
+
     @abstractmethod
     def _internalGetStep(self,antworldstate:BaseSingleAntWorldImage)->Position:
         pass
 
     def UpdatePosition(self,position:Position):
-        self.__CurrentPosition=position
+        self._CurrentPosition=position
 
     def GetStep(self,antworldstate:BaseSingleAntWorldImage)->AntStep:
-        return AntStep(self.__ID,self._internalGetStep(antworldstate))
+        return AntStep(self._ID,self._internalGetStep(antworldstate))

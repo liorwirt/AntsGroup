@@ -28,6 +28,8 @@ class FileMazeParser(BaseMazeParser):
     def GetName(self):
         return self.__Name
 
+    def IsObs(self,position:Position)->bool:
+        return  self.__Maze[position.Y][position.X]==0
 
 
 

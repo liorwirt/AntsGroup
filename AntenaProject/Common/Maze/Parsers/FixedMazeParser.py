@@ -24,5 +24,9 @@ class FixedMazeParser(BaseMazeParser):
     def GetDims(self):
         return (5,5)
 
+
+    def IsObs(self,position:Position)->bool:
+        return  self.__Maze[position.Y][position.X]==0
+
     def GetName(self):
         return "Fixed Testing Maze"

@@ -19,6 +19,11 @@ class BaseMazeParser(ABC):
 
     @property
     @abstractmethod
+    def IsObs(self,position:Position)->bool:
+        pass
+
+    @property
+    @abstractmethod
     def GetExits(self)->coordinates:
         pass
     @property

@@ -12,7 +12,7 @@ class AntsMetaDataConsumerWrapper(BaseAntsMetaDataConsumer):
     def ProcessPreRun(self,numberofsteps, maze, aditionaldata):
         try:
             for consumer in self.__Consumers:
-                self.__Consumers.ProcessPreRun(numberofsteps, maze, aditionaldata)
+                consumer.ProcessPreRun(numberofsteps, maze, aditionaldata)
         except Exception:
             traceback.print_exc()
 

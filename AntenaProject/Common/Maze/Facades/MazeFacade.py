@@ -6,9 +6,9 @@ from networkx.readwrite import json_graph
 
 class MazeFacade(object):
 
-    def __init__(self,mazeparser:BaseMazeParser,numberofsteps=1):
+    def __init__(self,mazeparser:BaseMazeParser):
         self.__MazeParser=mazeparser
-        self.__numberofsteps=numberofsteps
+
         self.__GenrateGraph()
     def GetMatrix(self)->np.ndarray:
         return self.__MazeParser.GetMatrix()
@@ -18,23 +18,26 @@ class MazeFacade(object):
         return self.__MazeParser.GetExits()
     def GetDims(self):
         return self.__MazeParser.GetDims()
-    def MayMove(self,src:Position,dst:Position):
+    def MayMove(self,src:Position,dst:Position,maxNumberOfSteps=1):
         if(src==dst):
             return True
         try:
             path=self.__GetPath(src,dst)
             #src and dst are returened
             lengthofpath=len(path)-2
-            return (lengthofpath>=0 and lengthofpath<self.__numberofsteps )
+            return (lengthofpath>=0 and lengthofpath<maxNumberOfSteps )
         except:
             return False
+    def IsObs(self,position:Position)->bool:
+        return  self.__MazeParser(position)
+
     @property
     def ConnectivityGraph(self):
         return self.__Graph
 
     @property
     def Name(self):
-        return self.__MazeParser.GetName
+        return self.__MazeParser.GetName()
 
     def __GetPath(self,src:Position,dst:Position):
 

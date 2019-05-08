@@ -5,7 +5,7 @@ from pprint import pformat
 class LoggingAntsMetaDataConsumer(BaseAntsMetaDataConsumer):
 
 
-    def ProcessPreRun(self,maze,numberofsteps,aditionaldata):
+    def ProcessPreRun(self,numberofsteps,maze,aditionaldata):
         logging.info(format(f"pre run on maze {maze.Name} for {numberofsteps} steps aditionaldata:{pformat(aditionaldata)}"))
 
 
