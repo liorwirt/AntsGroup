@@ -20,3 +20,8 @@ class BaseTotalWorldImage(ABC):
     @abstractmethod
     def WorldMatrix(self):
       pass
+
+    @property
+    @abstractmethod
+    def Coverage(self):
+        pass

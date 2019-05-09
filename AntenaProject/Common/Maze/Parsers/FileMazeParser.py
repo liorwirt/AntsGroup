@@ -43,7 +43,7 @@ class FileMazeParser(BaseMazeParser):
             raise Exception(format(f"file {filename} no enterence found"))
         if len(enterindexs[0])>1:
             raise Exception(format(f"file {filename} several enterences found"))
-        self.__Enterence= Position(enterindexs[0], enterindexs[1])
+        self.__Enterence= Position(enterindexs[0][0], enterindexs[1][0])
 
         exitindexs= np.where(map_planning =='F')
         if len(exitindexs[0]) == 0:

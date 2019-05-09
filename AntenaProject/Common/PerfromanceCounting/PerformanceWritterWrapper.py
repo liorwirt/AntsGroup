@@ -8,4 +8,4 @@ class PerofromanceWriterWrapper(BasePerofromanceWriter):
         self.__Writers=[LoggerPerofromanceWriter]
     def  WritePerformance(self,name,performanceTime):
         for writer in self.__Writers:
-            writer.WritePerformance(name,performanceTime)
+            writer.WritePerformance(writer,name,performanceTime)

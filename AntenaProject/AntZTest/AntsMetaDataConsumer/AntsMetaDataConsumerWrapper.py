@@ -2,13 +2,15 @@ import traceback
 from  AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTotalWorldImage
 from AntenaProject.AntZTest.AntsMetaDataConsumer.BaseAntsMetaDataConsumer import BaseAntsMetaDataConsumer
+from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt
 from AntenaProject.AntZTest.AntsMetaDataConsumer.LoggingAntsMetaDataConsumer import LoggingAntsMetaDataConsumer
 class AntsMetaDataConsumerWrapper(BaseAntsMetaDataConsumer):
     def __init__(self,config):
         # TODO add DILL Serialization
         # TODO add Messege to web
-        self.__Consumers=[LoggingAntsMetaDataConsumer(config)]
-
+        self.__Consumers=[]
+    def AddConsumer(self,consumer:BaseAntsMetaDataConsumer):
+        self.__Consumers.append(consumer)
     def ProcessPreRun(self,numberofsteps, maze, aditionaldata):
         try:
             for consumer in self.__Consumers:
@@ -21,11 +23,11 @@ class AntsMetaDataConsumerWrapper(BaseAntsMetaDataConsumer):
     def ProcessPreSysStep(self,step, worldimage:BaseTotalWorldImage, aditionaldata):
         try:
             for consumer in self.__Consumers:
-                consumer.ProcessPreRun(step, worldimage, aditionaldata)
+                consumer.ProcessPreSysStep(step, worldimage, aditionaldata)
         except Exception:
             traceback.print_exc()
 
-    def ProcessAntStep(self,step, ant,antworldimage:BaseSingleAntWorldImage,move,  aditionaldata):
+    def ProcessAntStep(self,step, ant:BasicAnt,antworldimage:BaseSingleAntWorldImage,move,  aditionaldata):
         try:
             for consumer in self.__Consumers:
                 consumer.ProcessAntStep(step, ant,antworldimage,move,  aditionaldata)

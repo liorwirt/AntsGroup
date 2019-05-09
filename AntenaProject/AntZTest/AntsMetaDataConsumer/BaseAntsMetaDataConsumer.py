@@ -1,5 +1,6 @@
 from abc import ABC,abstractmethod
 from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
+from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt
 from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTotalWorldImage
 class BaseAntsMetaDataConsumer(ABC):
@@ -15,7 +16,7 @@ class BaseAntsMetaDataConsumer(ABC):
         pass
 
     @abstractmethod
-    def ProcessAntStep(self,step:int,ant,antworldimage:BaseSingleAntWorldImage,move:AntStep, aditionaldata):
+    def ProcessAntStep(self,step:int,ant:BasicAnt,antworldimage:BaseSingleAntWorldImage,move:AntStep, aditionaldata):
         pass
 
     @abstractmethod

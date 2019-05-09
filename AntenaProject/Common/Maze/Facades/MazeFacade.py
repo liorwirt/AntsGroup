@@ -29,7 +29,7 @@ class MazeFacade(object):
         except:
             return False
     def IsObs(self,position:Position)->bool:
-        return  self.__MazeParser(position)
+        return  self.__MazeParser.IsObs(position)
 
     @property
     def ConnectivityGraph(self):
