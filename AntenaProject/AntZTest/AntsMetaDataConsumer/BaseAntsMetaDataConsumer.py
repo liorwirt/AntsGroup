@@ -3,12 +3,13 @@ from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt
 from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTotalWorldImage
+from AntenaProject.Common.Maze.Facades.MazeFacade import MazeFacade
 class BaseAntsMetaDataConsumer(ABC):
     def __init__(self,config):
         self._config=config
 
     @abstractmethod
-    def ProcessPreRun(self,numberofsteps:int,maze,aditionaldata):
+    def ProcessPreRun(self,numberofsteps:int,maze:MazeFacade,aditionaldata):
         pass
 
     @abstractmethod

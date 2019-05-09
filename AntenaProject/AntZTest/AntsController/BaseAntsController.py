@@ -6,14 +6,15 @@ from abc import ABC,abstractmethod
 from typing import Dict
 import sys
 import logging
-
+from AntenaProject.AntZTest.AntsMetaDataConsumer.AntsMetaDataConsumerWrapper import AntsMetaDataConsumerWrapper
+from AntenaProject.Common.PerfromanceCounting.PerformanceWritterWrapper import PerofromanceWriterWrapper
 def handle_exception(exc_type, exc_value, exc_traceback):
     logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 class BaseAntsController(ABC):
-    def __init__(self,config,maze,metadataconsumer,basicWorldImageProvider:BasicWorldImageProvider,antsproducer:BasicAntProducer):
+    def __init__(self,config,maze,metadataconsumer:AntsMetaDataConsumerWrapper,performanceCounterWrapper:PerofromanceWriterWrapper,basicWorldImageProvider:BasicWorldImageProvider,antsproducer:BasicAntProducer):
         sys.excepthook = handle_exception
-        self._PerformanceWritterWrapper=PerofromanceWriterWrapper()
+        self._PerformanceWritterWrapper=performanceCounterWrapper
         self._Maze=maze
         self._WorldImageProvider=basicWorldImageProvider
         self._Config=config

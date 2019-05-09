@@ -6,9 +6,13 @@ from AntenaProject.Common.Maze.Parsers.FileMazeParser import FileMazeParser
 from AntenaProject.SimpleExample.SimpleAntProducer import SimpleAntProducer
 from AntenaProject.SimpleExample.SimpleWorldImageProvider import SimpleWorldImageProvider
 from AntenaProject.Common.Config.IniConfigProvider import IniConfigProvider
+from AntenaProject.Common.PerfromanceCounting.PerformanceWritterWrapper import PerofromanceWriterWrapper
+from AntenaProject.Common.PerfromanceCounting.LoggerPerofromanceWriter import LoggerPerofromanceWriter
+from AntenaProject.Common.PerfromanceCounting.DillPerofromanceWriter import DillPerofromanceWriter
 from AntenaProject.AntZTest.AntsMetaDataConsumer.AntsMetaDataConsumerWrapper import AntsMetaDataConsumerWrapper
 from AntenaProject.AntZTest.AntsMetaDataConsumer.LoggingAntsMetaDataConsumer import LoggingAntsMetaDataConsumer
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DillAntsMetaDataConsumer import  DillAntsMetaDataConsumer
+from AntenaProject.AntZTest.AntsMetaDataConsumer.DrawingMetaDataConsumer import DrawingMetaDataConsumer
 
 import logging
 import time
@@ -56,9 +60,14 @@ def CreatLogger(configprovider:BaseConfigProvider,testfolder):
 def GetAntsController(configprovider,maze,baseTestFolder):
     metadataconsumer=AntsMetaDataConsumerWrapper(configprovider)
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
-    metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Dill")))
+    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
+    metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
+    performancecounterwritter=PerofromanceWriterWrapper(configprovider)
+    performancecounterwritter.AddWritter(LoggerPerofromanceWriter(configprovider))
+    performancecounterwritter.AddWritter(DillPerofromanceWriter(configprovider,CreateFolder(configprovider,baseTestFolder,"Performance")))
 
-    return  SimpleAntsContrller(config,maze,metadataconsumer,SimpleWorldImageProvider(config,maze),SimpleAntProducer(configprovider,maze.GetEnterence()))
+    return  SimpleAntsContrller(config,maze,metadataconsumer,performancecounterwritter
+                                ,SimpleWorldImageProvider(config,maze),SimpleAntProducer(configprovider,maze.GetEnterence()))
 
 
 if __name__ == '__main__':

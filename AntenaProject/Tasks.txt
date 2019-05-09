@@ -1,7 +1,6 @@
 1/ working example
-2/ add logger
-3/ add sending data
-4/ add dill performance counters
+2/ add logger web
+3/ add sending data web
 5/ add playback
 6/ add summery report
 8/ add interactive ui viewer
