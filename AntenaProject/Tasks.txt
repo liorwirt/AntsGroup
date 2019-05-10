@@ -1,8 +1,10 @@
-1/ working example
+1/ working example 90%
 2/ add logger web
 3/ add sending data web
 5/ add playback
 6/ add summery report
-8/ add interactive ui viewer
 9/add UT+single run
 10/add analysis of dill
+11/add display validation
+13/create movie
+12/publish

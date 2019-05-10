@@ -25,8 +25,9 @@ class MazeFacade(object):
             path=self.__GetPath(src,dst)
             #src and dst are returened
             lengthofpath=len(path)-2
-            return (lengthofpath>=0 and lengthofpath<maxNumberOfSteps )
-        except:
+            maymove= (lengthofpath>=0 and lengthofpath<maxNumberOfSteps )
+            return maymove
+        except Exception as ex:
             return False
     def IsObs(self,position:Position)->bool:
         return  self.__MazeParser.IsObs(position)
@@ -42,42 +43,43 @@ class MazeFacade(object):
     def __GetPath(self,src:Position,dst:Position):
 
         width, height = self.__MazeParser.GetDims()
-        path = nx.shortest_path(self.__Graph, self.__ToGridNode(src.X,src.Y, height),
-                                self.__ToGridNode(dst.X,dst.Y, height))
+        path = nx.shortest_path(self.__Graph, self.__ToGridNode(src.X,src.Y),
+                                self.__ToGridNode(dst.X,dst.Y))
         realpath = []
         for cord in path:
             x = self.__Graph.nodes[cord]["X"]
             y = self.__Graph.nodes[cord]["Y"]
             realpath.append((y, x))
         return realpath
-    def __ToGridNode(self,y,x, rownumber):
-        return x + (y * rownumber)
+    def __ToGridNode(self,x,y):
+        return format(f"{x},{y}")
     def __GenrateGraph(self):
 
-        width, height = self.__MazeParser.GetDims()
+        height,width  = self.__MazeParser.GetDims()
         labels = {}
         self.__Graph = nx.Graph()
-        for colIndex in range(0, width):
-            for rowIndex in range(0, height):
+        for rowIndex in range(0, width):
+            for colIndex in range(0, height):
                 if (self.__MazeParser.GetMatrix()[rowIndex][colIndex] == 1):
-                    coord = self.__ToGridNode(rowIndex, colIndex, height)
+                    coord = self.__ToGridNode(colIndex,rowIndex)
                     # we set connectivity
                     self.__Graph.add_node(coord)
                     self.__Graph.nodes[coord]["X"] = colIndex
                     self.__Graph.nodes[coord]["Y"] = rowIndex
-
+                else:
+                    k=0
         for node in self.__Graph.nodes:
             colIndex = self.__Graph.nodes[node]["X"]
             rowIndex = self.__Graph.nodes[node]["Y"]
-            self.__UpdateWeight(node, colIndex, rowIndex, 0, 1)
-            self.__UpdateWeight(node, colIndex, rowIndex, 0, -1)
-            self.__UpdateWeight(node, colIndex, rowIndex, -1, 0)
-            self.__UpdateWeight(node, colIndex, rowIndex, -1, 1)
-            self.__UpdateWeight(node, colIndex, rowIndex, -1, -1)
-            self.__UpdateWeight(node, colIndex, rowIndex, 1, 0)
-            self.__UpdateWeight(node, colIndex, rowIndex, 1, -1)
-            self.__UpdateWeight(node, colIndex, rowIndex, 1, 1)
-    def __UpdateWeight(self, node, colIndex, rowIndex, xFactor, yFactor):
+            self.__AttemptToConnect(node, colIndex, rowIndex, 0, 1)
+            self.__AttemptToConnect(node, colIndex, rowIndex, 0, -1)
+            self.__AttemptToConnect(node, colIndex, rowIndex, -1, 0)
+            self.__AttemptToConnect(node, colIndex, rowIndex, -1, 1)
+            self.__AttemptToConnect(node, colIndex, rowIndex, -1, -1)
+            self.__AttemptToConnect(node, colIndex, rowIndex, 1, 0)
+            self.__AttemptToConnect(node, colIndex, rowIndex, 1, -1)
+            self.__AttemptToConnect(node, colIndex, rowIndex, 1, 1)
+    def __AttemptToConnect(self, node, colIndex, rowIndex, xFactor, yFactor):
         width, height = width, height = self.__MazeParser.GetDims()
         newColIndex = colIndex + xFactor
         newRowIndex = rowIndex + yFactor
@@ -89,9 +91,8 @@ class MazeFacade(object):
             return
         if (newRowIndex) < 0:
             return
-        vertexweight = 1
-        if (self.__MazeParser.GetMatrix()[newRowIndex][newColIndex] == 1):
-            # we try to go to Cover -not connected
-            NextCord = self.__ToGridNode(newRowIndex, newColIndex, height)
+        AdjNode=self.__ToGridNode(newColIndex,newRowIndex)
+        if (AdjNode in self.__Graph):
+
             # we set connectivity
-            self.__Graph.add_edge(NextCord, node, weight=vertexweight)
+            self.__Graph.add_edge(AdjNode, node)

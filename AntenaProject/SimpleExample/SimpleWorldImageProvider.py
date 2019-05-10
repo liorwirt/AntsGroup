@@ -37,20 +37,13 @@ class SimpleWorldImageProvider(BasicWorldImageProvider):
     def __GetPositionWorldImage(self,position:Position):
         visiblenodes=[]
         self.__ExploredCells[position.Y][position.X] = 1
-        leftMost = max(0, position.X - int(np.floor(self.__VisibilityRange / 2)))
-        rightMost = min(self._Maze.GetDims()[1],  int(position.X + np.floor(self.__VisibilityRange / 2)))
+        leftMost, rightMost, topMost, bottomMost = self.__GetBB(position=position, radius=self.__VisibilityRange)
 
-        topMost = max(0, position.Y -  int(np.floor(self.__VisibilityRange / 2)))
-        bottomMost = min(self._Maze.GetDims()[0],  int(position.Y +np.floor(self.__VisibilityRange / 2)))
         for pos_x in range(leftMost, rightMost+1):
             for pos_y in range(topMost, bottomMost+1):
-                if(self.__ExploredCells[position.Y][position.X]==0):
-                    visiblenodes.append(NodeState(NodeStateEnum.UnExplored,Position(x=pos_x,y=pos_y)))
-                else:
-                    if(self._Maze.IsObs(position)):
-                        visiblenodes.append(NodeState(NodeStateEnum.Obs, Position(x=pos_x, y=pos_y)))
-                    else:
-                        visiblenodes.append(NodeState(NodeStateEnum.Clear, Position(x=pos_x, y=pos_y)))
+                visibleNodePosition = Position(x=pos_x, y=pos_y)
+                state=self.__CombinedMap[pos_y][pos_x]
+                visiblenodes.append(NodeState(NodeStateEnum(state), visibleNodePosition))
 
 
         return SimpleSingleAntWorldImage(visiblenodes)
@@ -65,32 +58,36 @@ class SimpleWorldImageProvider(BasicWorldImageProvider):
             ant.UpdatePosition(step.Position)
             self.__Ants[ant.ID]=ant
             self.__UpdateExploredStepsPerAnt(step.Position)
-            self.__GenrateCombinedMap()
 
+        self.__GenrateCombinedMap()
         self.__AntsPlannedStepDict.clear()
+    def __GetBB(self,radius:int,position:Position):
+        leftMost = max(0, position.X -radius)
+        rightMost = min(self._Maze.GetDims()[1] - 1, position.X + radius)
+
+        topMost = max(0, position.Y - radius)
+        bottomMost = min(self._Maze.GetDims()[0] - 1, position.Y +radius)
+        return leftMost,rightMost,topMost,bottomMost
+
     def __UpdateExploredStepsPerAnt(self,position:Position):
         self.__ExploredCells[position.Y][position.X]=1
-        leftMost=max(0,position.X- int(np.floor(self.__VisibilityRange/2)))
-        rightMost = min(self._Maze.GetDims()[1],  int(position.X + np.floor(self.__VisibilityRange / 2)))
-
-        topMost = max(0, position.Y -  int(np.floor(self.__VisibilityRange / 2)))
-        bottomMost = min(self._Maze.GetDims()[0],  int(position.Y+ np.floor(self.__VisibilityRange / 2)))
+        leftMost,rightMost,topMost,bottomMost=self.__GetBB(position=position,radius=self.__VisibilityRange)
 
         for pos_x in range(leftMost,rightMost+1):
             for pos_y in range (topMost,bottomMost+1):
-                self.__ExploredCells[position.Y][position.X] = 1
+                self.__ExploredCells[pos_y][pos_x] = 1
 
     def __GenrateCombinedMap(self):
-        #TODO add refrenceOfAnts
+
         [height,width]=self.__ExploredCells.shape
-        for idx_X in range(0,width):
-            for idx_Y in range(0,height):
-                if(self.__ExploredCells[idx_Y][idx_X]==0):
-                    self.__CombinedMap[idx_Y][idx_X]=NodeStateEnum.UnExplored
+        for pos_x in range(0,width):
+            for pos_y in range(0,height):
+                if(self.__ExploredCells[pos_y][pos_x]==0):
+                    self.__CombinedMap[pos_y][pos_x]=NodeStateEnum.UnExplored
                 else:
-                    if (self._Maze.IsObs(Position(x=idx_X,y=idx_Y))):
-                        self.__CombinedMap[idx_Y][idx_X] = NodeStateEnum.Obs
+                    if (self._Maze.IsObs(Position(x=pos_x,y=pos_y))):
+                        self.__CombinedMap[pos_y][pos_x] = NodeStateEnum.Obs
                     else:
-                        self.__CombinedMap[idx_Y][idx_X]=NodeStateEnum.Clear
+                        self.__CombinedMap[pos_y][pos_x]=NodeStateEnum.Clear
         for ant in self.__Ants.values():
             self.__CombinedMap[ant.CurrentPosition.Y][ant.CurrentPosition.X] = NodeStateEnum.Ant

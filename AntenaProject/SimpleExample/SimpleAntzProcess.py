@@ -3,6 +3,7 @@ from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 from AntenaProject.SimpleExample.SimpleAntsController import SimpleAntsContrller
 from AntenaProject.Common.Maze.Facades.MazeFacade import MazeFacade
 from AntenaProject.Common.Maze.Parsers.FileMazeParser import FileMazeParser
+from AntenaProject.Common.Maze.Parsers.DIYMazeParser import DIYMazeParser
 from AntenaProject.SimpleExample.SimpleAntProducer import SimpleAntProducer
 from AntenaProject.SimpleExample.SimpleWorldImageProvider import SimpleWorldImageProvider
 from AntenaProject.Common.Config.IniConfigProvider import IniConfigProvider
@@ -36,6 +37,7 @@ def GetMaze(configprovider:BaseConfigProvider)->MazeFacade:
     filename = configprovider.GetConfigValueForSectionAndKey('MAZE', 'filename')
     filename = os.path.join(os.path.dirname(__file__), filename)
     parser = FileMazeParser(filename)
+    #parser=DIYMazeParser(5)
     return MazeFacade(parser)
 def CreatLogger(configprovider:BaseConfigProvider,testfolder):
    folder=CreateFolder(configprovider,testfolder,"Log")
