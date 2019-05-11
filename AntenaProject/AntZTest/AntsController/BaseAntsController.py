@@ -37,9 +37,9 @@ class BaseAntsController(ABC):
                     for ant in self._Ants:
                         with PerformanceCounter(format(f"Ant_{ant.ID} step"), self._PerformanceWritterWrapper):
                             antworldimage=self._WorldImageProvider.GetAntWorldImage(ant)
-                            step=ant.GetStep(antworldimage)
+                            step,antAdditionalData=ant.GetStep(antworldimage)
                             self._WorldImageProvider.ProcessStep(ant, step)
-                            self._AntsMetaDataConsumer.ProcessAntStep(counter,ant,antworldimage,step,None)
+                            self._AntsMetaDataConsumer.ProcessAntStep(counter,ant,antworldimage,step,antAdditionalData)
                     self._WorldImageProvider.UpdatePositionsAccordingToMoves()
                     self._AntsMetaDataConsumer.ProcessPostSysStep(counter, self._WorldImageProvider.GetWorldImage(), self._GetPostStepAdditionalData())
 

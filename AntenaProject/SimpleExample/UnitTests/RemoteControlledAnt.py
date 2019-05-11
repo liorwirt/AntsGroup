@@ -8,5 +8,5 @@ import random
 class RemoteControlledAnt(BasicAnt):
     def SetStep(self,step:Position):
         self.__Step=step
-    def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Position:
-        return self.__Step
+    def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage):
+        return self.__Step,{}

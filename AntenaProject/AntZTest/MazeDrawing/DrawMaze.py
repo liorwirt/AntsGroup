@@ -9,9 +9,9 @@ class DrawMaze(object):
     def __init__(self):
       colorsdata=[]
       colorsdata.append("silver")
-      colorsdata.append("black")
       colorsdata.append("white")
-      colorsdata.append("pink")
+      colorsdata.append("black")
+      colorsdata.append("green")
       self.__ax=None
       self.__cmap = matplotlib.colors.LinearSegmentedColormap.from_list("Maze",colorsdata,N=4)
 
