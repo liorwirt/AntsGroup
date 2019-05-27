@@ -7,7 +7,7 @@ class BasicAnt(ABC):
     def __init__(self,id:int,config):
         self._Config=config
         self._ID=id
-        self._CurrentPosition=Position.GetEmptyPoistion()
+        self._CurrentPosition=Position.GetEmptyPosition()
 
 
     @property

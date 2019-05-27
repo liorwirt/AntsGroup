@@ -23,5 +23,5 @@ class Position(object):
         return   self.__y==other.Y and self.__x==other.X
 
     @staticmethod
-    def GetEmptyPoistion():
+    def GetEmptyPosition():
         return Position(-1,-1)
