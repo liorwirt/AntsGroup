@@ -15,3 +15,6 @@ class IniConfigProvider(BaseConfigProvider):
         if section not in self.__Configprovider:
             return defaultvalue
         return self.__Configprovider[section]
+
+    def SetConfigSection(self, section,key, value):
+        self.__Configprovider[section][key]=value
