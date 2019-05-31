@@ -14,9 +14,12 @@ from AntenaProject.Common.PerfromanceCounting.DillPerofromanceWriter import Dill
 from AntenaProject.AntZTest.AntsMetaDataConsumer.AntsMetaDataConsumerWrapper import AntsMetaDataConsumerWrapper
 from AntenaProject.AntZTest.AntsMetaDataConsumer.LoggingAntsMetaDataConsumer import LoggingAntsMetaDataConsumer
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DillAntsMetaDataConsumer import  DillAntsMetaDataConsumer
-from AntenaProject.AntZTest.AntsMetaDataConsumer.SummeryMetaDataConsumer import  SummeryMetaDataConsumer
-
+from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import ComposedEvaluationResponse
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DrawingMetaDataConsumer import DrawingMetaDataConsumer
+from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import ComposedEvaluationResponse
+from AntenaProject.SimpleExample.SimpleAntEvaluator import SimpleAntEvaluator
+from AntenaProject.AntZTest.AntsRunEvaluation.Enums import EvaluationResponseEnum
+from AntenaProject.AntZTest.AntsRunEvaluation.EvaluationResponseWrapper import EvaluationResponseWrapper
 
 import logging
 import time
@@ -29,7 +32,8 @@ class SimpleMultiAntzAgent(BaseMultiRunAgent):
     def __init__(self,id,config:BaseConfigProvider,maze:MazeFacade,basefolder,return_dict):
         BaseMultiRunAgent.__init__(self,id,config,maze,return_dict)
         self._basicrunfolder=os.path.join(basefolder,str(id))
-        self._SummeryMetaDataConsumer=SummeryMetaDataConsumer(config)
+        self._Result=ComposedEvaluationResponse.GetOkResult();
+
 
     def _InternalStart(self):
         baseTestFolder = format(f"Test_{self._id}_{time.time()}")
@@ -41,10 +45,10 @@ class SimpleMultiAntzAgent(BaseMultiRunAgent):
 
 
     def _InternalProcess(self):
-        self._testController.Process()
+        self._Result=self._testController.Process()
 
-    def _ComposeResult(self) -> str:
-        return  self._SummeryMetaDataConsumer.GetSummery()
+    def _ComposeResult(self) -> ComposedEvaluationResponse:
+        return  self._Result
 
     def _InternalStop(self):
         pass
@@ -55,7 +59,7 @@ class SimpleMultiAntzAgent(BaseMultiRunAgent):
     def GetAntsController(self,configprovider, maze):
         metadataconsumer = AntsMetaDataConsumerWrapper(configprovider)
         metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(configprovider))
-        metadataconsumer.AddConsumer( self._SummeryMetaDataConsumer)
+
         #metadataconsumer.AddConsumer(DrawingMetaDataConsumer(configprovider))
         metadataconsumer.AddConsumer(
             DillAntsMetaDataConsumer(configprovider, self.CreateFolder(self._basicrunfolder, "Data")))
@@ -63,10 +67,11 @@ class SimpleMultiAntzAgent(BaseMultiRunAgent):
         performancecounterwritter.AddWritter(LoggerPerofromanceWriter(configprovider))
         performancecounterwritter.AddWritter(
             DillPerofromanceWriter(configprovider, self.CreateFolder(self._basicrunfolder, "Performance")))
-
+        evaluationWrapper = EvaluationResponseWrapper(configprovider)
+        evaluationWrapper.AddEvaluator(SimpleAntEvaluator(configprovider))
         return SimpleAntsContrller(configprovider, maze, metadataconsumer, performancecounterwritter
                                    , SimpleWorldImageProvider(configprovider, maze),
-                                   SimpleAntProducer(configprovider, maze.GetEnterence()))
+                                   SimpleAntProducer(configprovider, maze.GetEnterence()),evaluationWrapper)
 
     def CreateFolder(self,basicrunfolder, subfolder):
         newpath = os.path.join(basicrunfolder,  subfolder)

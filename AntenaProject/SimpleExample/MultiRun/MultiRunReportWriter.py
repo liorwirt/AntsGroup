@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import ComposedEvaluationResponse
 import os
 class MultiRunReportWriter(object):
     def __init__(self,folder):
@@ -9,7 +10,7 @@ class MultiRunReportWriter(object):
     def SetDataForProcess(self,id,data:str):
         self._InitDataDict[id]=data;
 
-    def SetResultForProcess(self, id, data: str):
+    def SetResultForProcess(self, id, data: ComposedEvaluationResponse):
         self._ResultDataDict[id] = data;
 
     def ComposeReport(self):
@@ -21,7 +22,10 @@ class MultiRunReportWriter(object):
             initialdata.text=self._InitDataDict[key];
             if (key in self._ResultDataDict):
                 result = ET.SubElement(item, 'Result')
-                result.text = self._ResultDataDict[key];
+                for response in self._ResultDataDict[key].Responses:
+                    responseelem=ET.SubElement(result, 'respone')
+                    responseelem.set('State',str(response.State))
+                    responseelem.text = response.Messege;
 
 
 

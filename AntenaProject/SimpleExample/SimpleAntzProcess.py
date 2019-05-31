@@ -14,6 +14,10 @@ from AntenaProject.AntZTest.AntsMetaDataConsumer.AntsMetaDataConsumerWrapper imp
 from AntenaProject.AntZTest.AntsMetaDataConsumer.LoggingAntsMetaDataConsumer import LoggingAntsMetaDataConsumer
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DillAntsMetaDataConsumer import  DillAntsMetaDataConsumer
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DrawingMetaDataConsumer import DrawingMetaDataConsumer
+from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import ComposedEvaluationResponse
+from AntenaProject.SimpleExample.SimpleAntEvaluator import SimpleAntEvaluator
+from AntenaProject.AntZTest.AntsRunEvaluation.Enums import EvaluationResponseEnum
+from AntenaProject.AntZTest.AntsRunEvaluation.EvaluationResponseWrapper import EvaluationResponseWrapper
 
 import logging
 import time
@@ -67,9 +71,10 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)
     performancecounterwritter.AddWritter(LoggerPerofromanceWriter(configprovider))
     performancecounterwritter.AddWritter(DillPerofromanceWriter(configprovider,CreateFolder(configprovider,baseTestFolder,"Performance")))
-
+    evaluationWrapper=EvaluationResponseWrapper(configprovider)
+    evaluationWrapper.AddEvaluator(SimpleAntEvaluator(configprovider))
     return  SimpleAntsContrller(config,maze,metadataconsumer,performancecounterwritter
-                                ,SimpleWorldImageProvider(config,maze),SimpleAntProducer(configprovider,maze.GetEnterence()))
+                                ,SimpleWorldImageProvider(config,maze),SimpleAntProducer(configprovider,maze.GetEnterence()),evaluationWrapper)
 
 
 if __name__ == '__main__':
@@ -78,7 +83,12 @@ if __name__ == '__main__':
     CreatLogger(config,baseTestFolder)
     maze=GetMaze(config)
     testController=GetAntsController(config,maze,baseTestFolder)
-    testController.Process()
+    result=testController.Process()
+    if(result.State!=EvaluationResponseEnum.OK and result.State!=EvaluationResponseEnum.Warning):
+        print("Not So good reponse")
+    else:
+        print ("Got a good reponse")
+
     #genrate AA Report (time....)
 
 

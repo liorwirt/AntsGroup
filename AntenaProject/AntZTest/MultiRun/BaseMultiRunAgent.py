@@ -2,6 +2,7 @@ from abc import ABC,abstractmethod
 from multiprocessing import Process,Event
 from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 from AntenaProject.Common.Maze.Facades.MazeFacade import MazeFacade
+from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import ComposedEvaluationResponse
 class BaseMultiRunAgent(ABC,Process):
     def __init__(self,id,config:BaseConfigProvider,maze:MazeFacade,return_dict):
         Process.__init__(self)
@@ -20,7 +21,7 @@ class BaseMultiRunAgent(ABC,Process):
         self._InternalTermination()
 
     @abstractmethod
-    def _ComposeResult(self)->str:
+    def _ComposeResult(self)->ComposedEvaluationResponse:
         pass
     @abstractmethod
     def _InternalStart(self):

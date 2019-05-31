@@ -2,9 +2,7 @@
 2/ add logger web
 3/ add sending data web
 5/ add playback
-6/ add summery report
-9/add UT+single run
+9/add UT
 10/add analysis of dill
-11/add display validation
 13/create movie
 
