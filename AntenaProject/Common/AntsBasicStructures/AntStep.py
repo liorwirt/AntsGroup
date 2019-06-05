@@ -14,7 +14,7 @@ class AntStep(object):
         return self.__antid
 
     def __str__(self):
-        return format(f"antid {self.__antid}  poistion[ {self.__position}]")
+        return format(f"antid {self.__antid}  position[ {self.__position}]")
 
     def __eq__(self, other):
         return self.__antid==other.AntId and self.__position==other.Position

@@ -15,7 +15,7 @@ class NodeState(object):
         return self.__nodeState
 
     def __str__(self):
-        return format(f"Node State {self.__nodeState}  poistion[ {self.__position}]")
+        return format(f"Node State {self.__nodeState}  position [ {self.__position}]")
 
     def __eq__(self, other):
         return self.__nodeState==other.NodeState and self.__position==other.Position
