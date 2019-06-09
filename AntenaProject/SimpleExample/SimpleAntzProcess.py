@@ -18,6 +18,7 @@ from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import 
 from AntenaProject.SimpleExample.SimpleAntEvaluator import SimpleAntEvaluator
 from AntenaProject.AntZTest.AntsRunEvaluation.Enums import EvaluationResponseEnum
 from AntenaProject.AntZTest.AntsRunEvaluation.EvaluationResponseWrapper import EvaluationResponseWrapper
+from AntenaProject.AntZTest.AntsMetaDataConsumer.MetrySenderMetaDataConsumer import MetrySenderMetaDataConsumer
 
 import logging
 import time
@@ -67,6 +68,7 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     metadataconsumer=AntsMetaDataConsumerWrapper(configprovider)
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
     metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
+    metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)
     performancecounterwritter.AddWritter(LoggerPerofromanceWriter(configprovider))
