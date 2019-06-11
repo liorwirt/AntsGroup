@@ -20,11 +20,13 @@ class AntPathPlanner():
         # calculate a path to the destination
         # return the destination
 
-    def __ConvertWorldImageToWeightedMatrix(self):
-        pass
 
-    def __ConvertWorldImageToWeightedMatrix(self):
-        pass
+    def __ConvertWorldImageToWeightedMatrix(worldImage, safetyRadius: int, cellTypeWeights):
+        resultMatrix = np.zeros(worldImage.matrix.shape)
+
+        resultMatrix = np.where(worldImage.matrix  == 'blocked', np.inf, cellTypeWeights['free'])
+
+
 
     def __ChooseNextDestination(self, NewDestination: Position):
         pass
