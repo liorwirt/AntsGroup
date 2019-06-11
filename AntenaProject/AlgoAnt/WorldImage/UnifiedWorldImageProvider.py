@@ -5,7 +5,6 @@ from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTot
 from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt
 from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.Position import Position
-from AntenaProject.Common.AntsBasicStructures.NodeState import NodeState
 from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 from AntenaProject.SimpleExample.SimpleTotalWorldImage import SimpleTotalWorldImage
 import numpy as np
