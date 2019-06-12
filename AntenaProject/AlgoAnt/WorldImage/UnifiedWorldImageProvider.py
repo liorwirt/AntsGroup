@@ -69,12 +69,12 @@ class UnifiedWorldImageProvider(BasicWorldImageProvider):
         [height, width] = self.__ExploredCells.shape
         for pos_x in range(0, width):
             for pos_y in range(0, height):
-                if (self.__ExploredCells[pos_y][pos_x] == 0):
+                if self.__ExploredCells[pos_y][pos_x] == 0:
                     self.__CombinedMap[pos_y][pos_x] = NodeStateEnum.UnExplored
                 else:
-                    if (self._Maze.IsObs(Position(x=pos_x, y=pos_y))):
+                    if self._Maze.IsObs(Position(x=pos_x, y=pos_y)):
                         self.__CombinedMap[pos_y][pos_x] = NodeStateEnum.Obs
                     else:
                         self.__CombinedMap[pos_y][pos_x] = NodeStateEnum.Clear
         for ant in self.__Ants.values():
-            self.__CombinedMap[ant.CurrentPosition.Y][ant.CurrentPosition.X] = NodeStateEnum.Ant
+            self.__CombinedMap[ant.CurrentPosition.Y][ant.CurrentPosition.X] = ant.Type()

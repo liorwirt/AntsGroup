@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
+from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 from typing import Dict, Tuple
 
 
@@ -29,3 +30,6 @@ class BasicAnt(ABC):
     def GetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[AntStep, Dict]:
         position, additionaldata = self._internalGetStep(antworldstate)
         return AntStep(self._ID, position), additionaldata
+
+    def Type(self):
+        return NodeStateEnum.Ant
