@@ -6,7 +6,8 @@ import numpy as np
 class SimpleSingleAntWorldImage(BaseSingleAntWorldImage):
     def __init__(self, worldImage: np.array, ants):
         self.__WorldImage = worldImage
-        self.__Ants = SimpleSingleAntWorldImage.__create_ant_list_with_update_times(ants)
+        self.__Ants = ants
+        self.__AntUpdateTimes = SimpleSingleAntWorldImage.__create_ant_update_times_list(ants)
 
     @property
     def VisibleNodes(self):
@@ -21,10 +22,10 @@ class SimpleSingleAntWorldImage(BaseSingleAntWorldImage):
         return self.__Ants
 
     @staticmethod
-    def __create_ant_list_with_update_times(ants):
+    def __create_ant_update_times_list(ants):
         now = time.time()
         ret_list = []
-        for ant in ants:
-            ret_list.append((ant, now))
+        for _ in ants:
+            ret_list.append(now)
 
         return ret_list
