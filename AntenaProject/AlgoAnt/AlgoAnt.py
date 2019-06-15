@@ -18,6 +18,7 @@ class AlgoAnt(BasicAnt):
 							  NodeStateEnum.Ant: np.inf}
 		# TODO get safety radius  from configuration.
 		self.__safetyRadius = 2
+		self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights)
 
 	def __validTransmissionNeighborExists(self, ants, visibleMaze):
 		return True
@@ -33,8 +34,7 @@ class AlgoAnt(BasicAnt):
 			self.role = AntType.Transmission
 			return self._CurrentPosition, {}
 
-		pathPlanner = AntPathPlanner(antworldstate, self.__safetyRadius, self.__cellWeights, self._CurrentPosition)
-		return pathPlanner.PlanPath()
+		return self.__pathPlanner.PlanPath(antworldstate, self._CurrentPosition)
 
 	def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
 
