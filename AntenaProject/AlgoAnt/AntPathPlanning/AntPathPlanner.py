@@ -10,7 +10,7 @@ from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
 # stability factor should be <= 1
 class AntPathPlanner:
-	def __init__(self, safetyRadius: int, cellTypeWeights, stabilityFactor: int):
+	def __init__(self, safetyRadius: int, cellTypeWeights, stabilityFactor: float):
 		self.__SafetyRadius = safetyRadius
 		self.__CellWeights = cellTypeWeights
 		self.__CurrentDestinationPosition = None
@@ -45,11 +45,11 @@ class AntPathPlanner:
 		# decide if we want to switch destinations
 		# we might have arrived at the current one, or the new one is too attractive
 		# lower price means candidate is more attractive
-		if ((SelectedCandidateDestination == startingPosition) or
-				(SelectedCandidatePrice < self.__CurrentDestinationPrice * self.__StabilityFactor)):
+		if SelectedCandidateDestination == startingPosition or \
+				SelectedCandidatePrice < self.__CurrentDestinationPrice * self.__StabilityFactor:
 			return [SelectedCandidateDestination, SelectedCandidatePrice]
 		else:
-			return [SelectedCandidateDestination, SelectedCandidatePrice]
+			return [self.__CurrentDestinationPosition, self.__CurrentDestinationPrice]
 
 	def __CreateCandidateDestinationsList(self, PriceMatrix, WeightedMatrix):
 		CandidateDestinationsPositions = []
