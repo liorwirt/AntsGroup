@@ -38,34 +38,28 @@ def isLOS(combined_map, position1, position2):
 		sx = -1
 	else:
 		sx = 1
+
 	if dx >= dy:
-		while x0 != x1:
-			f = f + dy
-			if f >= dx:
-				if isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
-					return False
-				y0 = y0 + sy
-				f = f - dx
-			if f != 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
-				return False
-			if dy == 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0)]) and isBlocked(
-					combined_map[int(x0 + (sx - 1) / 2), int(y0 - 1)]):
-				return False
-			x0 = x0 + sx
+		return SearchBlockedAlongLine(combined_map, x0, x1, dx, sx, y0, dy, sy)
 	else:
-		while y0 != y1:
-			f = f + dx
-			if f >= dy:
-				if isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
-					return False
-				x0 = x0 + sx
-				f = f - dy
-			if f != 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
-				return False
-			if dy == 0 and isBlocked(combined_map[int(x0), int(y0 + (sy - 1) / 2)]) and isBlocked(
-					combined_map[int(x0 - 1), int(y0 + (sy - 1) / 2)]):
+		return SearchBlockedAlongLine(combined_map, y0, y1, dy, sy, x0, dx, sx)
+
+
+def SearchBlockedAlongLine(combined_map, x0, x1, dx, sx, y0, dy, sy):
+	f = 0
+	while x0 != x1:
+		f = f + dy
+		if f >= dx:
+			if isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
 				return False
 			y0 = y0 + sy
+			f = f - dx
+		if f != 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
+			return False
+		if dy == 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0)]) and isBlocked(
+				combined_map[int(x0 + (sx - 1) / 2), int(y0 - 1)]):
+			return False
+		x0 = x0 + sx
 	return True
 
 
@@ -95,7 +89,11 @@ class TestUtilFunctions(unittest.TestCase):
 		in_radius = isInRadius(radius, position1, position2)
 		fake_maze = FakeMazeCreator(12)
 		is_los = isLOS(fake_maze, position1, position2)
-		print("In range: " + str(isInRange(fake_maze, radius, position1, position2)))
+		in_range = isInRange(fake_maze, radius, position1, position2)
+
+		self.assertTrue(not in_radius)
+		self.assertTrue(not is_los)
+		self.assertTrue(not in_range)
 
 
 if __name__ == '__main__':
