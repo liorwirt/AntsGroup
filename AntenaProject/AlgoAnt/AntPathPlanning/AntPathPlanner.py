@@ -29,7 +29,8 @@ class AntPathPlanner:
 	safety radius as Manhattan distance, because it's the number of steps an ant will take
 	'''
 
-	def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
+	# def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
+	def ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
 		resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
 		[height, width] = worldImage.WorldImage.shape
