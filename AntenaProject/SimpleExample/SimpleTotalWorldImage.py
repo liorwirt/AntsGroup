@@ -10,9 +10,10 @@ from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTot
 
 class SimpleTotalWorldImage(BaseTotalWorldImage):
 
-    def __init__(self, antsWorldImage, combinedMap: np.matrix):
+    def __init__(self, antsWorldImage, combinedMap: np.array, ants):
         self.__AntsWorldImage = antsWorldImage
         self.__CombinedMap = combinedMap
+        self.__Ants = ants
 
     def GetNodesState(self, *positions: Position) -> List[NodeState]:
         results = []
@@ -42,3 +43,6 @@ class SimpleTotalWorldImage(BaseTotalWorldImage):
         mazesize = self.__CombinedMap.shape[0] * self.__CombinedMap.shape[1]
 
         return float(((mazesize - howmuschisunexplored) * 100) / mazesize)
+
+    def Ants(self) -> List[BasicAnt]:
+        return self.__Ants

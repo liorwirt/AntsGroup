@@ -43,10 +43,10 @@ class SimpleWorldImageProvider(BasicWorldImageProvider):
                 state = self.__CombinedMap[pos_y][pos_x]
                 visiblenodes.append(NodeState(NodeStateEnum(state), visibleNodePosition))
 
-        return SimpleSingleAntWorldImage(visiblenodes)
+        return SimpleSingleAntWorldImage(visiblenodes, self.__Ants)
 
     def GetWorldImage(self) -> BaseTotalWorldImage:
-        return SimpleTotalWorldImage(self.__AntsWorldImage, self.__CombinedMap)
+        return SimpleTotalWorldImage(self.__AntsWorldImage, self.__CombinedMap, self.__Ants)
 
     def UpdatePositionsAccordingToMoves(self):
         for value in self.__AntsPlannedStepDict.values():

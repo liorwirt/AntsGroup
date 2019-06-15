@@ -8,6 +8,7 @@ from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 from AntenaProject.SimpleExample.SimpleTotalWorldImage import SimpleTotalWorldImage
 import numpy as np
+import time
 
 
 class UnifiedWorldImageProvider(BasicWorldImageProvider):
@@ -32,10 +33,10 @@ class UnifiedWorldImageProvider(BasicWorldImageProvider):
         return antWorldImage
 
     def __GetPerAntGlobalWorldImage(self):
-        return SimpleSingleAntWorldImage(self.__CombinedMap)
+        return SimpleSingleAntWorldImage(self.__CombinedMap, self.__Ants)
 
     def GetWorldImage(self) -> BaseTotalWorldImage:
-        return SimpleTotalWorldImage(self.__AntsWorldImage, self.__CombinedMap)
+        return SimpleTotalWorldImage(self.__AntsWorldImage, self.__CombinedMap, self.__Ants)
 
     def UpdatePositionsAccordingToMoves(self):
         for value in self.__AntsPlannedStepDict.values():
