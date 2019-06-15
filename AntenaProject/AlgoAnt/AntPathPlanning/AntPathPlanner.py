@@ -7,80 +7,109 @@ from AntenaProject.Common.AntsBasicStructures.Enums import AntType, NodeStateEnu
 from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import GetNeighbours
 from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
+'''
+stability factor should be <= 1'''
+
 
 class AntPathPlanner:
-	def __init__(self, safetyRadius: int, cellTypeWeights):
+	def __init__(self, safetyRadius: int, cellTypeWeights, stabilityFactor: int):
 		self.__SafetyRadius = safetyRadius
 		self.__CellWeights = cellTypeWeights
-
-	# self.__CurrentDestination = CurrentDestination
-	# receive list of weights
+		self.__CurrentDestinationPosition = None
+		self.__CurrentDestinationPrice = 0
+		self.__StabilityFactor = stabilityFactor
 
 	def PlanPath(self, worldImage: BaseSingleAntWorldImage, startingPosition: Position):
 		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
 		PriceMatrix = Dijkstra(WeightedMatrix, startingPosition)
+		self.__CurrentDestinationPrice = PriceMatrix[
+			self.__CurrentDestinationPosition.X, self.__CurrentDestinationPosition.Y]
 
-		CandidateDestinations = []
+		self.__CurrentDestinationPosition, self.__CurrentDestinationPrice = self.__SelectDestination(PriceMatrix,
+																									 WeightedMatrix,
+																									 startingPosition)
 
-		[height, width] = worldImage.WorldImage.shape
+	def __SelectDestination(self, PriceMatrix, WeightedMatrix, startingPosition):
+		CandidateDestinationsPositions = []
+		CandidateDestionationsPrices = []
+		[height, width] = WeightedMatrix.shape
 
 		# make a list of destinations
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
 				if (PriceMatrix[pos_x][pos_y] != np.inf) and (WeightedMatrix[pos_x][pos_y] == NodeStateEnum.UnExplored):
-					CandidateDestinations.append((Position(pos_x, pos_y), PriceMatrix[pos_x][pos_y]))
+					CandidateDestinationsPositions.append(Position(pos_x, pos_y))
+					CandidateDestionationsPrices.append(PriceMatrix[pos_x][pos_y])
 
-	# pick a destination based inversly on the
+		# pick a destination based inversly on the price of reaching that destination
+		SumPrices = sum(CandidateDestionationsPrices)
+		CandidateDestionationsProbabilities = [Price / SumPrices for Price in
+											   CandidateDestionationsPrices]
+		SelectedCandidateDestination = np.random.choice(CandidateDestinationsPositions,
+														p=CandidateDestionationsProbabilities)
+		SelectedCandidatePrice = CandidateDestionationsPrices[
+			CandidateDestinationsPositions.index(SelectedCandidateDestination)]
+
+		# lower price means candidate is more attractive
+		if ((SelectedCandidateDestination == startingPosition) or
+				(SelectedCandidatePrice < self.__CurrentDestinationPrice * self.__StabilityFactor)):
+			return [SelectedCandidateDestination, SelectedCandidatePrice]
+		else:
+			return [SelectedCandidateDestination, SelectedCandidatePrice]
 
 
-	# decide if we want to switch destinations (we might have arrived at the current one)
-	# calculate a path to the destination
-	# return the destination
+# decide if we want to switch destinations (we might have arrived at the current one)
+# calculate a path to the destination
+# return the destination
 
-	'''
-	safety radius as Manhattan distance, because it's the number of steps an ant will take
-	'''
+'''
+safety radius as Manhattan distance, because it's the number of steps an ant will take
+'''
 
-	# def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
-	def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
-		resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
-		[height, width] = worldImage.WorldImage.shape
+# def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
+def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
+	resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
-		for pos_x in range(0, width):
-			for pos_y in range(0, height):
-				resultMatrix[pos_x][pos_y] = self.__CellWeights[worldImage.WorldImage[pos_x][pos_y]]
+	[height, width] = worldImage.WorldImage.shape
 
-		resultMatrix[startingPosition.X, startingPosition.Y] = self.__CellWeights[NodeStateEnum.Clear]
+	for pos_x in range(0, width):
+		for pos_y in range(0, height):
+			resultMatrix[pos_x][pos_y] = self.__CellWeights[worldImage.WorldImage[pos_x][pos_y]]
 
-		# mark a safety radius around scout ants
-		if len(worldImage.Ants()) > 0:
-			for ant in worldImage.Ants().values():
-				if ant.CurrentPosition == startingPosition:
-					continue
+	resultMatrix[startingPosition.X, startingPosition.Y] = self.__CellWeights[NodeStateEnum.Clear]
 
-				if ant.Type() == AntType.Scout:
-					resultMatrix = self.__MarkNodeNeighboursWithinRadius(ant.CurrentPosition,
-																		 self.__SafetyRadius,
-																		 resultMatrix,
-																		 self.__CellWeights[NodeStateEnum.Ant])
+	# mark a safety radius around scout ants
+	if len(worldImage.Ants()) > 0:
+		for ant in worldImage.Ants().values():
+			if ant.CurrentPosition == startingPosition:
+				continue
 
-		return resultMatrix
+			if ant.Type() == AntType.Scout:
+				resultMatrix = self.__MarkNodeNeighboursWithinRadius(ant.CurrentPosition,
+																	 self.__SafetyRadius,
+																	 resultMatrix,
+																	 self.__CellWeights[NodeStateEnum.Ant])
 
-	def __ChooseNextDestination(self, NewDestination: Position):
-		pass
+	return resultMatrix
 
-	def __CalculatePathToDestination(self):
-		pass
 
-	def __MarkNodeNeighboursWithinRadius(self, position: Position, radius: int, inputMatrix: np.ndarray,
-										 nodeValue: int):
-		if 0 == radius:
-			inputMatrix[position.X, position.Y] = nodeValue
-			return inputMatrix
+def __ChooseNextDestination(self, NewDestination: Position):
+	pass
 
-		[height, width] = inputMatrix.shape
-		for neighbour in GetNeighbours(position, width, height):
-			inputMatrix = self.__MarkNodeNeighboursWithinRadius(neighbour, radius - 1, inputMatrix, nodeValue)
 
+def __CalculatePathToDestination(self):
+	pass
+
+
+def __MarkNodeNeighboursWithinRadius(self, position: Position, radius: int, inputMatrix: np.ndarray,
+									 nodeValue: int):
+	if 0 == radius:
+		inputMatrix[position.X, position.Y] = nodeValue
 		return inputMatrix
+
+	[height, width] = inputMatrix.shape
+	for neighbour in GetNeighbours(position, width, height):
+		inputMatrix = self.__MarkNodeNeighboursWithinRadius(neighbour, radius - 1, inputMatrix, nodeValue)
+
+	return inputMatrix
