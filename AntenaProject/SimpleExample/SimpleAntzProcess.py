@@ -68,8 +68,9 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     performancecounterwritter.AddWritter(LoggerPerofromanceWriter(configprovider))
     performancecounterwritter.AddWritter(DillPerofromanceWriter(configprovider,CreateFolder(configprovider,baseTestFolder,"Performance")))
 
-    return  SimpleAntsContrller(config,maze,metadataconsumer,performancecounterwritter
-                                ,SimpleWorldImageProvider(config,maze),SimpleAntProducer(configprovider,maze.GetEnterence()))
+    return SimpleAntsContrller(config, maze, metadataconsumer, performancecounterwritter,
+                               SimpleWorldImageProvider(config, maze), SimpleAntProducer(configprovider,
+                                                                                         maze.GetEnterence()))
 
 
 if __name__ == '__main__':
