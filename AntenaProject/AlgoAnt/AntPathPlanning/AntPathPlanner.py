@@ -1,6 +1,6 @@
 import numpy as np
 
-from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTotalWorldImage
+from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.AntsBasicStructures.Enums import AntType, NodeStateEnum
 
@@ -9,7 +9,7 @@ from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
 
 class AntPathPlanner:
-	def __init__(self, worldImage: BaseTotalWorldImage, safetyRadius: int, cellTypeWeights, startingPosition: Position):
+	def __init__(self, worldImage: BaseSingleAntWorldImage, safetyRadius: int, cellTypeWeights, startingPosition: Position):
 		self.startingPosition = startingPosition
 		self.WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(worldImage, safetyRadius, cellTypeWeights)
 
@@ -30,14 +30,14 @@ class AntPathPlanner:
 	safety radius as Manhattan distance, because it's the number of steps an ant will take
 	'''
 
-	def __ConvertWorldImageToWeightedMatrix(self, worldImage: BaseTotalWorldImage, safetyRadius: int, cellTypeWeights):
-		resultMatrix = np.zeros(worldImage.WorldMatrix.shape)
+	def __ConvertWorldImageToWeightedMatrix(self, worldImage: BaseSingleAntWorldImage, safetyRadius: int, cellTypeWeights):
+		resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
-		[height, width] = worldImage.WorldMatrix.shape
+		[height, width] = worldImage.WorldImage.shape
 
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
-				resultMatrix[pos_x][pos_y] = cellTypeWeights[worldImage.WorldMatrix[pos_x][pos_y]]
+				resultMatrix[pos_x][pos_y] = cellTypeWeights[worldImage.WorldImage[pos_x][pos_y]]
 
 		resultMatrix[self.startingPosition.X, self.startingPosition.Y] = cellTypeWeights[NodeStateEnum.Clear]
 
