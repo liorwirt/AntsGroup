@@ -1,5 +1,7 @@
 from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 import configparser
+
+
 class DictionaryConfigProvider(BaseConfigProvider):
     def __init__(self,baseDict={}):
         self.__Dict=baseDict

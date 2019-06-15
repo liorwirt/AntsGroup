@@ -1,5 +1,5 @@
 import numpy as np
-from typing import  List
+from typing import List
 from AntenaProject.Common.Maze.Parsers.BaseMazeParser import BaseMazeParser
 from AntenaProject.Common.AntsBasicStructures.Position import Position
 
@@ -9,12 +9,12 @@ class DIYMazeParser(BaseMazeParser):
         self.__dimensions=dimensions
         self.__Maze=np.ones((dimensions,dimensions))
 
-        self.__Enterence=Position(0,0)
+        self.__Enterance = Position(0, 0)
         self.__Exits = [Position(0, 0)]
     def SetExits(self,exits:List[Position]):
         self.__Exits = exits
     def SetEntrence(self,entrence:Position):
-        self.__Enterence = entrence
+        self.__Enterance = entrence
 
     def SetObs(self,osticals:List[Position]):
         self.__Maze = np.ones(( self.__dimensions,  self.__dimensions))
@@ -25,7 +25,7 @@ class DIYMazeParser(BaseMazeParser):
         return self.__Maze
 
     def GetEnterence(self):
-        return self.__Enterence
+        return self.__Enterance
 
     def GetExits(self):
         return self.__Exits

@@ -15,7 +15,7 @@ import time
 class UnifiedWorldImageProvider(BasicWorldImageProvider):
 
 	def __init__(self, config, maze):
-		super.__init__(self, config, maze)
+		super().__init__(config, maze)
 		self.__AntsPlannedStepDict = {}
 		self.__AntsWorldImage = {}
 		self.__ExploredCells = np.zeros(maze.GetDims())
