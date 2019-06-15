@@ -14,7 +14,7 @@ from AntenaProject.Common.AntsBasicStructures.Position import Position
 
 class TestPathPlanner(TestCase):
 
-	def test_EmptyGrid(self):
+	def test__ConvertWorldImageToWeightedMatrix_EmptyGrid(self):
 		Maze = MazeFacade(DIYMazeParser(8))
 		Provider = UnifiedWorldImageProvider(maze=Maze, config=DictionaryConfigProvider())
 
@@ -23,10 +23,9 @@ class TestPathPlanner(TestCase):
 				   NodeStateEnum.UnExplored: 1,
 				   NodeStateEnum.Ant: np.inf}
 
-		Planner = AntPathPlanner(Provider.GetWorldImage(), safetyRadius=2, cellTypeWeights=weights,
-								 startingPosition=Position(0, 0))
-
-		result = Planner.WeightedMatrix
+		Planner = AntPathPlanner(safetyRadius=2, cellTypeWeights=weights)
+		StartPosition = Position(1, 1)
+		result = Planner.__ConvertWorldImageToWeightedMatrix(StartPosition, Provider.GetWorldImage())
 
 		print(result)
 

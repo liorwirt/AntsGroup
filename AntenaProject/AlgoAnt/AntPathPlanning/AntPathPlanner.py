@@ -9,17 +9,16 @@ from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
 
 class AntPathPlanner:
-	def __init__(self, worldImage: BaseSingleAntWorldImage, safetyRadius: int, cellTypeWeights, startingPosition: Position):
-		self.startingPosition = startingPosition
-		self.WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(worldImage, safetyRadius, cellTypeWeights)
+	def __init__(self, safetyRadius: int, cellTypeWeights):
+		self.__SafetyRadius = safetyRadius
+		self.__CellWeights = cellTypeWeights
 
 	# self.__CurrentDestination = CurrentDestination
 	# receive list of weights
 
-	def PlanPath(self):
-		pass
+	def PlanPath(self, worldImage: BaseSingleAntWorldImage, startingPosition: Position):
+		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
 
-	# convert world image into weighted matrix
 	# run dijkstra on matrix
 	# choose a destination
 	# decide if we want to switch destinations (we might have arrived at the current one)
@@ -30,25 +29,28 @@ class AntPathPlanner:
 	safety radius as Manhattan distance, because it's the number of steps an ant will take
 	'''
 
-	def __ConvertWorldImageToWeightedMatrix(self, worldImage: BaseSingleAntWorldImage, safetyRadius: int, cellTypeWeights):
+	def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
 		resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
 		[height, width] = worldImage.WorldImage.shape
 
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
-				resultMatrix[pos_x][pos_y] = cellTypeWeights[worldImage.WorldImage[pos_x][pos_y]]
+				resultMatrix[pos_x][pos_y] = self.__CellWeights[worldImage.WorldImage[pos_x][pos_y]]
 
-		resultMatrix[self.startingPosition.X, self.startingPosition.Y] = cellTypeWeights[NodeStateEnum.Clear]
+		resultMatrix[startingPosition.X, startingPosition.Y] = self.__CellWeights[NodeStateEnum.Clear]
 
 		# mark a safety radius around scout ants
 		if len(worldImage.Ants()) > 0:
 			for ant in worldImage.Ants().values():
-				if ant.CurrentPosition == self.startingPosition:
+				if ant.CurrentPosition == startingPosition:
 					continue
 
 				if ant.Type() == AntType.Scout:
-					self.__MarkNodeNeighboursWithinRadius(ant.CurrentPosition, safetyRadius, resultMatrix, cellTypeWeights[NodeStateEnum.Ant])
+					resultMatrix = self.__MarkNodeNeighboursWithinRadius(ant.CurrentPosition,
+																		 self.__SafetyRadius,
+																		 resultMatrix,
+																		 self.__CellWeights[NodeStateEnum.Ant])
 
 		return resultMatrix
 
