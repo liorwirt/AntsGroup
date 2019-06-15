@@ -6,10 +6,9 @@ from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt, Position
 
 class AlgoAnt(BasicAnt):
 
-    def __init__(self, id: int, config, position: Position):
-        super().__init__(id, config)
-        super().UpdatePosition(position)
+	def __init__(self, id: int, config, position: Position):
+		super().__init__(id, config)
+		super().UpdatePosition(position)
 
-    def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
-        pass
-
+	def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
+		pass

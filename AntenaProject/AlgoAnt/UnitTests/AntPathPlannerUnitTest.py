@@ -45,7 +45,7 @@ class TestPathPlanner(TestCase):
 
 	def test_SingleScout(self):
 		Maze = MazeFacade(DIYMazeParser(8))
-		WorldImageProvder = UnifiedWorldImageProvider(maze=Maze, config=DictionaryConfigProvider())
+		Provider = UnifiedWorldImageProvider(maze=Maze, config=DictionaryConfigProvider())
 
 		weights = {NodeStateEnum.Clear: 2,
 				   NodeStateEnum.Obs: np.inf,
@@ -54,9 +54,9 @@ class TestPathPlanner(TestCase):
 
 		ant = AlgoAnt(id=1, config=DictionaryConfigProvider(), position=Position(3, 3))
 
-		WorldImageProvder.ProcessStep(ant, AntStep(ant.ID, ant.CurrentPosition))
-
-		Planner = AntPathPlanner(WorldImageProvder.GetWorldImage(), safetyRadius=0, cellTypeWeights=weights,
+		Provider.ProcessStep(ant, AntStep(ant.ID, ant.CurrentPosition))
+		Provider.UpdatePositionsAccordingToMoves()
+		Planner = AntPathPlanner(Provider.GetWorldImage(), safetyRadius=0, cellTypeWeights=weights,
 								 startingPosition=Position(0, 0))
 
 		result = Planner.WeightedMatrix
