@@ -42,7 +42,7 @@ class AntPathPlanner:
 		resultMatrix[self.startingPosition.X, self.startingPosition.Y] = cellTypeWeights[NodeStateEnum.Clear]
 
 		# mark a safety radius around scout ants
-		for ant in worldImage.Ants():
+		for ant in worldImage.Ants().values():
 			if ant.CurrentPosition == self.startingPosition:
 				continue
 
