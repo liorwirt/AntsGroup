@@ -9,7 +9,8 @@ from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
 
 class AntPathPlanner:
-	def __init__(self, worldImage: BaseTotalWorldImage, safetyRadius: int, cellTypeWeights):
+	def __init__(self, worldImage: BaseTotalWorldImage, safetyRadius: int, cellTypeWeights, startingPosition: Position):
+		self.startingPosition = startingPosition
 		self.WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(worldImage, safetyRadius, cellTypeWeights)
 
 	# self.__CurrentDestination = CurrentDestination
@@ -38,12 +39,20 @@ class AntPathPlanner:
 			for pos_y in range(0, height):
 				resultMatrix[pos_x][pos_y] = cellTypeWeights[worldImage.WorldMatrix[pos_x][pos_y]]
 
+		resultMatrix[self.startingPosition.X, self.startingPosition.Y] = cellTypeWeights[NodeStateEnum.Clear]
+
+		# mark a safety radius around scout ants
 		for ant in worldImage.Ants():
+			if ant.CurrentPosition == self.startingPosition:
+				continue
+
 			if ant.Type() == AntType.Scout:
 				self.__MarkNodeNeighboursWithinRadius(ant.CurrentPosition,
 													  safetyRadius,
 													  resultMatrix,
 													  cellTypeWeights[NodeStateEnum.Ant])
+
+		return resultMatrix
 
 	def __ChooseNextDestination(self, NewDestination: Position):
 		pass
@@ -51,13 +60,14 @@ class AntPathPlanner:
 	def __CalculatePathToDestination(self):
 		pass
 
-	def __MarkNodeNeighboursWithinRadius(self, position: Position, radius: int, inputMatrix, nodeValue):
+	def __MarkNodeNeighboursWithinRadius(self, position: Position, radius: int, inputMatrix: np.ndarray,
+										 nodeValue: int):
 		if 0 == radius:
 			inputMatrix[position.X, position.Y] = nodeValue
 			return inputMatrix
 
 		[height, width] = inputMatrix.shape
-		for neighbour in GetNeighbours(position, width - 1, height - 1):
+		for neighbour in GetNeighbours(position, width, height):
 			inputMatrix = self.__MarkNodeNeighboursWithinRadius(neighbour, radius - 1, inputMatrix, nodeValue)
 
 		return inputMatrix
