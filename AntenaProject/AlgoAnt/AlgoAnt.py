@@ -12,10 +12,15 @@ class AlgoAnt(BasicAnt):
         super().UpdatePosition(position)
         self.role = AntType.Scout
 
+    def __validTransmissionNeighborExists(self, ants, visibleMaze):
+        return True
+
     def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
         fellowAnts = antworldstate.Ants()
-        mazeImage = antworldstate.VisibleNodes
+        visibleMaze = antworldstate.VisibleNodes
 
-
+        if not self.__validTransmissionNeighborExists(fellowAnts, visibleMaze):
+            self.role = AntType.Transmission
+            return self._CurrentPosition, {}
 
 
