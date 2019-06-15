@@ -17,9 +17,10 @@ class AlgoAnt(BasicAnt):
 							  NodeStateEnum.Obs: np.inf,
 							  NodeStateEnum.UnExplored: CellWeights.UnexploredCell,
 							  NodeStateEnum.Ant: np.inf}
-		# TODO get safety radius  from configuration.
+		# TODO get safety radius and stabilityFactor from configuration.
 		self.__safetyRadius = 2
-		self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights)
+		self.__stabilityFactor = 0.9
+		self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights, self.__stabilityFactor)
 
 	def __validTransmissionNeighborExists(self, ants, visibleMaze):
 		# TODO neighborRadius should be moved to Params.
