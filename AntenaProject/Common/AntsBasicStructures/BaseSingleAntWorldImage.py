@@ -14,6 +14,11 @@ class BaseSingleAntWorldImage(ABC):
     def VisibleNodes(self) -> List[NodeState]:
         pass
 
+    @property
+    @abstractmethod
+    def WorldImage(self):
+        pass
+
     @abstractmethod
     def Ants(self):
         """
