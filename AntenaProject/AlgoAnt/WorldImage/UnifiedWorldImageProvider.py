@@ -15,7 +15,7 @@ import time
 class UnifiedWorldImageProvider(BasicWorldImageProvider):
 
 	def __init__(self, config, maze):
-		BasicWorldImageProvider.__init__(self, config, maze)
+		super.__init__(self, config, maze)
 		self.__AntsPlannedStepDict = {}
 		self.__AntsWorldImage = {}
 		self.__ExploredCells = np.zeros(maze.GetDims())
@@ -33,11 +33,11 @@ class UnifiedWorldImageProvider(BasicWorldImageProvider):
 		self.__AntsWorldImage[ant.ID] = antWorldImage
 		return antWorldImage
 
-    def __GetPerAntGlobalWorldImage(self):
-        return SimpleSingleAntWorldImage(self.__CombinedMap, self.__Ants)
+	def __GetPerAntGlobalWorldImage(self):
+		return SimpleSingleAntWorldImage(self.__CombinedMap, self.__Ants)
 
-    def GetWorldImage(self) -> BaseTotalWorldImage:
-        return SimpleTotalWorldImage(self.__AntsWorldImage, self.__CombinedMap, self.__Ants)
+	def GetWorldImage(self) -> BaseTotalWorldImage:
+		return SimpleTotalWorldImage(self.__AntsWorldImage, self.__CombinedMap, self.__Ants)
 
 	def UpdatePositionsAccordingToMoves(self):
 		for value in self.__AntsPlannedStepDict.values():
