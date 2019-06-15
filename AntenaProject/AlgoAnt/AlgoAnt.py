@@ -2,7 +2,6 @@ from typing import Tuple, Dict
 import numpy as np
 
 from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt, Position, BaseSingleAntWorldImage, AntStep
-from AntenaProject.Common.
 
 
 class AlgoAnt(BasicAnt):
