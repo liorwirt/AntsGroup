@@ -39,6 +39,10 @@ class TestPathPlanner(TestCase):
 				else:
 					self.assertEqual(result[i][j], weights[NodeStateEnum.UnExplored])
 
+	'''
+	should return an unexplored matrix except for a scout ant at position (3,3) with radius 0 safety radius
+	'''
+
 	def test_SingleScout(self):
 		Maze = MazeFacade(DIYMazeParser(8))
 		WorldImageProvder = UnifiedWorldImageProvider(maze=Maze, config=DictionaryConfigProvider())
@@ -52,7 +56,7 @@ class TestPathPlanner(TestCase):
 
 		WorldImageProvder.ProcessStep(ant, AntStep(ant.ID, ant.CurrentPosition))
 
-		Planner = AntPathPlanner(WorldImageProvder.GetWorldImage(), safetyRadius=2, cellTypeWeights=weights,
+		Planner = AntPathPlanner(WorldImageProvder.GetWorldImage(), safetyRadius=0, cellTypeWeights=weights,
 								 startingPosition=Position(0, 0))
 
 		result = Planner.WeightedMatrix
