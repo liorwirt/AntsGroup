@@ -6,3 +6,8 @@ class NodeStateEnum(IntEnum):
     Clear=1,
     Obs=2,
     Ant=3,
+
+
+class AntType(IntEnum):
+    Scout = 0,
+    Transmission = 1,
