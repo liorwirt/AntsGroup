@@ -38,7 +38,7 @@ class AntPathPlanner:
 			for pos_y in range(0, height):
 				resultMatrix[pos_x][pos_y] = cellTypeWeights[worldImage.WorldMatrix[pos_x][pos_y]]
 
-		for ant in worldImage.GetAntList():
+		for ant in worldImage.Ants():
 			if ant.Type() == AntType.Scout:
 				self.__MarkNodeNeighboursWithinRadius(ant.CurrentPosition,
 													  safetyRadius,
