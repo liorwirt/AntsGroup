@@ -30,7 +30,7 @@ class AntPathPlanner:
 	'''
 
 	# def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
-	def ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
+	def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
 		resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
 		[height, width] = worldImage.WorldImage.shape

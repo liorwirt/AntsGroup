@@ -30,7 +30,7 @@ class TestPathPlanner(TestCase):
 		manuallyAdjustedMaze = np.where(mazeMatix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Obs)
 		manuallyAdjustedMaze[0, 0] = NodeStateEnum.Clear
 		singleAntWorldImage = SimpleSingleAntWorldImage(manuallyAdjustedMaze, {})
-		result = Planner.ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
+		result = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
 
 		print(result)
 
