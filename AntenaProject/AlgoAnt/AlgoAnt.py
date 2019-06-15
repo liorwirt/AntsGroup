@@ -3,6 +3,7 @@ import numpy as np
 from AntenaProject.Common.AntsBasicStructures.Enums import AntType, NodeStateEnum, CellWeights
 from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt, Position, BaseSingleAntWorldImage
 from AntenaProject.AlgoAnt.AntPathPlanning.AntPathPlanner import AntPathPlanner
+from AntenaProject.Common.Utils.UtilFunctions import isInRange
 
 
 class AlgoAnt(BasicAnt):
@@ -21,7 +22,14 @@ class AlgoAnt(BasicAnt):
 		self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights)
 
 	def __validTransmissionNeighborExists(self, ants, visibleMaze):
-		return True
+		# TODO neighborRadius should be moved to Params.
+		neighborRadius = 5.0
+		for ant in ants:
+			if ant.role == AntType.Transmission and \
+					isInRange(visibleMaze, neighborRadius, ant.CurrentPosition, self.CurrentPosition):
+				return True
+
+		return False
 
 	def _internalGetStepTransmission(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
 		return self._CurrentPosition, {}
