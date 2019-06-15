@@ -27,12 +27,10 @@ class TestPathPlanner(TestCase):
 		Planner = AntPathPlanner(safetyRadius=2, cellTypeWeights=weights)
 		StartPosition = Position(0, 0)
 		mazeMatix = Maze.GetMatrix()
-		manuallyAdjustedMaze = np.where(mazeMatix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Obs)
+		manuallyAdjustedMaze = np.where(mazeMatix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Clear)
 		manuallyAdjustedMaze[0, 0] = NodeStateEnum.Clear
 		singleAntWorldImage = SimpleSingleAntWorldImage(manuallyAdjustedMaze, {})
-		result = Planner.ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
-
-		print(result)
+		result = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
 
 		Width, Height = result.shape
 
@@ -62,6 +60,7 @@ class TestPathPlanner(TestCase):
 		Provider.UpdatePositionsAccordingToMoves()
 		Planner = AntPathPlanner(safetyRadius=0, cellTypeWeights=weights)
 
-		result = Planner.ConvertWorldImageToWeightedMatrix(Position(0, 0), Provider.GetAntWorldImage(ant))
+		result = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(Position(0, 0),
+																			Provider.GetAntWorldImage(ant))
 
 		print(result)

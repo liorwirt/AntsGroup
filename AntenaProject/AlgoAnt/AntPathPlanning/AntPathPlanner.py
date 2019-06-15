@@ -18,9 +18,21 @@ class AntPathPlanner:
 
 	def PlanPath(self, worldImage: BaseSingleAntWorldImage, startingPosition: Position):
 		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
+		PriceMatrix = Dijkstra(WeightedMatrix, startingPosition)
 
-	# run dijkstra on matrix
-	# choose a destination
+		CandidateDestinations = []
+
+		[height, width] = worldImage.WorldImage.shape
+
+		# make a list of destinations
+		for pos_x in range(0, width):
+			for pos_y in range(0, height):
+				if (PriceMatrix[pos_x][pos_y] != np.inf) and (WeightedMatrix[pos_x][pos_y] == NodeStateEnum.UnExplored):
+					CandidateDestinations.append((Position(pos_x, pos_y), PriceMatrix[pos_x][pos_y]))
+
+	# pick a destination based inversly on the
+
+
 	# decide if we want to switch destinations (we might have arrived at the current one)
 	# calculate a path to the destination
 	# return the destination
@@ -30,7 +42,7 @@ class AntPathPlanner:
 	'''
 
 	# def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
-	def ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
+	def __ConvertWorldImageToWeightedMatrix(self, startingPosition: Position, worldImage: BaseSingleAntWorldImage):
 		resultMatrix = np.zeros(worldImage.WorldImage.shape)
 
 		[height, width] = worldImage.WorldImage.shape
