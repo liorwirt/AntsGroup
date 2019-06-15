@@ -10,6 +10,7 @@ from AntenaProject.Common.Config.DictionaryConfigProvider import DictionaryConfi
 from AntenaProject.AlgoAnt.AlgoAnt import AlgoAnt
 from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.Position import Position
+from AntenaProject.SimpleExample.SimpleSingleAntWorldImage import SimpleSingleAntWorldImage
 
 
 class TestPathPlanner(TestCase):
@@ -24,8 +25,12 @@ class TestPathPlanner(TestCase):
 				   NodeStateEnum.Ant: np.inf}
 
 		Planner = AntPathPlanner(safetyRadius=2, cellTypeWeights=weights)
-		StartPosition = Position(1, 1)
-		result = Planner.__ConvertWorldImageToWeightedMatrix(StartPosition, Provider.GetWorldImage())
+		StartPosition = Position(0, 0)
+		mazeMatix = Maze.GetMatrix()
+		manuallyAdjustedMaze = np.where(mazeMatix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Obs)
+		manuallyAdjustedMaze[0, 0] = NodeStateEnum.Clear
+		singleAntWorldImage = SimpleSingleAntWorldImage(manuallyAdjustedMaze, {})
+		result = Planner.ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
 
 		print(result)
 
