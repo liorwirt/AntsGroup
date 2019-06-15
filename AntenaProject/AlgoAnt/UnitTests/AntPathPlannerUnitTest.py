@@ -60,9 +60,8 @@ class TestPathPlanner(TestCase):
 
 		Provider.ProcessStep(ant, AntStep(ant.ID, ant.CurrentPosition))
 		Provider.UpdatePositionsAccordingToMoves()
-		Planner = AntPathPlanner(Provider.GetWorldImage(), safetyRadius=0, cellTypeWeights=weights,
-								 startingPosition=Position(0, 0))
+		Planner = AntPathPlanner(safetyRadius=0, cellTypeWeights=weights)
 
-		result = Planner.WeightedMatrix
+		result = Planner.ConvertWorldImageToWeightedMatrix(Position(0, 0), Provider.GetAntWorldImage(ant))
 
 		print(result)
