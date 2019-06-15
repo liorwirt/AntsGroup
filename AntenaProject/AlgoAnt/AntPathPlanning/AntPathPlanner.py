@@ -56,6 +56,7 @@ class AntPathPlanner:
 		CandidateDestionationsPrices = []
 		[height, width] = WeightedMatrix.shape
 
+		# TODO use np.where, np.array.toList instead of iteration
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
 				if (PriceMatrix[pos_x][pos_y] != np.inf) and (WeightedMatrix[pos_x][pos_y] == NodeStateEnum.UnExplored):
