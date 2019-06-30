@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.Position import Position
@@ -93,8 +94,30 @@ class AntPathPlanner:
 
 		return resultMatrix
 
-	def __CalculatePathToDestination(self):
-		pass
+	def __CalculatePathToDestination(self, startingPosition: Position, DestinationPosition: Position, weightedMatrix):
+		route = []
+		currentPosition = DestinationPosition
+		while currentPosition != startingPosition:
+			route.append(currentPosition)
+			currentPosition = self.__FindCheapestNeighbour(weightedMatrix, currentPosition)
+		route.reverse()
+
+		return route
+
+	def __FindCheapestNeighbour(self, weightedMatrix, position: Position):
+		[height, width] = weightedMatrix.shape
+		weight = np.inf
+		cheapestNeighbour = position
+		neighbourList = GetNeighbours(position, width, height)
+
+		# shuffle so the neighbour is chosen randomly from routes with equal cost
+		random.shuffle(neighbourList)
+		for neighbour in neighbourList:
+			if weightedMatrix[neighbour.X][neighbour.Y] < weight:
+				weight = weightedMatrix[neighbour.X][neighbour.Y]
+				cheapestNeighbour = neighbour
+
+		return cheapestNeighbour
 
 	def __MarkNodeNeighboursWithinRadius(self, position: Position, radius: int, inputMatrix: np.ndarray,
 										 nodeValue: int):

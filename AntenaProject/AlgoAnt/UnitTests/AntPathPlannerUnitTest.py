@@ -11,6 +11,7 @@ from AntenaProject.AlgoAnt.AlgoAnt import AlgoAnt
 from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.SimpleExample.SimpleSingleAntWorldImage import SimpleSingleAntWorldImage
+from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
 
 class TestPathPlanner(TestCase):
@@ -24,10 +25,10 @@ class TestPathPlanner(TestCase):
 				   NodeStateEnum.UnExplored: 1,
 				   NodeStateEnum.Ant: np.inf}
 
-		Planner = AntPathPlanner(safetyRadius=2, cellTypeWeights=weights)
+		Planner = AntPathPlanner(safetyRadius=2, cellTypeWeights=weights, stabilityFactor=1)
 		StartPosition = Position(0, 0)
-		mazeMatix = Maze.GetMatrix()
-		manuallyAdjustedMaze = np.where(mazeMatix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Clear)
+		mazeMatrix = Maze.GetMatrix()
+		manuallyAdjustedMaze = np.where(mazeMatrix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Clear)
 		manuallyAdjustedMaze[0, 0] = NodeStateEnum.Clear
 		singleAntWorldImage = SimpleSingleAntWorldImage(manuallyAdjustedMaze, {})
 		result = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
@@ -42,10 +43,10 @@ class TestPathPlanner(TestCase):
 					self.assertEqual(result[i][j], weights[NodeStateEnum.UnExplored])
 
 	'''
-	should return an unexplored matrix except for a scout ant at position (3,3) with radius 0 safety radius
+	in a uniform grid, the weights on the route should increase by 1 each step
 	'''
 
-	def test_SingleScout(self):
+	def test__CalculatePathToDestination_UniformGrid(self):
 		Maze = MazeFacade(DIYMazeParser(8))
 		Provider = UnifiedWorldImageProvider(maze=Maze, config=DictionaryConfigProvider())
 
@@ -54,13 +55,51 @@ class TestPathPlanner(TestCase):
 				   NodeStateEnum.UnExplored: 1,
 				   NodeStateEnum.Ant: np.inf}
 
-		ant = AlgoAnt(id=1, config=DictionaryConfigProvider(), position=Position(3, 3))
+		Planner = AntPathPlanner(safetyRadius=2, cellTypeWeights=weights, stabilityFactor=1)
+		StartPosition = Position(0, 0)
+		mazeMatrix = Maze.GetMatrix()
+		manuallyAdjustedMaze = np.where(mazeMatrix == 1, NodeStateEnum.UnExplored, NodeStateEnum.Clear)
+		manuallyAdjustedMaze[0, 0] = NodeStateEnum.Clear
+		singleAntWorldImage = SimpleSingleAntWorldImage(manuallyAdjustedMaze, {})
+		weightedMatrix = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(StartPosition, singleAntWorldImage)
+		pathMatrix = Dijkstra(weightedMatrix, StartPosition)
 
-		Provider.ProcessStep(ant, AntStep(ant.ID, ant.CurrentPosition))
-		Provider.UpdatePositionsAccordingToMoves()
-		Planner = AntPathPlanner(safetyRadius=0, cellTypeWeights=weights)
+		resultRoute = Planner._AntPathPlanner__CalculatePathToDestination(StartPosition, Position(4, 4), pathMatrix)
 
-		result = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(Position(0, 0),
-																			Provider.GetAntWorldImage(ant))
+		weightSum = 0
 
-		print(result)
+		for position in resultRoute:
+			weightSum += weightedMatrix[position.X][position.Y]
+			self.assertEqual(pathMatrix[position.X][position.Y], weightSum)
+
+		def printRoute(route):
+			for position in route:
+				print(f'[{position.X}, {position.Y}] ')
+
+	# printRoute(resultRoute)
+
+
+'''
+should return an unexplored matrix except for a scout ant at position (3,3) with radius 0 safety radius
+'''
+
+
+def test_SingleScout(self):
+	Maze = MazeFacade(DIYMazeParser(8))
+	Provider = UnifiedWorldImageProvider(maze=Maze, config=DictionaryConfigProvider())
+
+	weights = {NodeStateEnum.Clear: 2,
+			   NodeStateEnum.Obs: np.inf,
+			   NodeStateEnum.UnExplored: 1,
+			   NodeStateEnum.Ant: np.inf}
+
+	ant = AlgoAnt(id=1, config=DictionaryConfigProvider(), position=Position(3, 3))
+
+	Provider.ProcessStep(ant, AntStep(ant.ID, ant.CurrentPosition))
+	Provider.UpdatePositionsAccordingToMoves()
+	Planner = AntPathPlanner(safetyRadius=0, cellTypeWeights=weights)
+
+	result = Planner._AntPathPlanner__ConvertWorldImageToWeightedMatrix(Position(0, 0),
+																		Provider.GetAntWorldImage(ant))
+
+	print(result)
