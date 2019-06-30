@@ -121,6 +121,8 @@ class AntPathPlanner:
 
 	def __MarkNodeNeighboursWithinRadius(self, position: Position, radius: int, inputMatrix: np.ndarray,
 										 nodeValue: int):
+		if -1 == radius:
+			return inputMatrix
 		if 0 == radius:
 			inputMatrix[position.X, position.Y] = nodeValue
 			return inputMatrix

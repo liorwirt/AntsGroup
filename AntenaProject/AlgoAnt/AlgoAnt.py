@@ -18,7 +18,7 @@ class AlgoAnt(BasicAnt):
 							  NodeStateEnum.UnExplored: CellWeights.UnexploredCell,
 							  NodeStateEnum.Ant: np.inf}
 		# TODO get safety radius and stabilityFactor from configuration.
-		self.__safetyRadius = 0
+		self.__safetyRadius = -1 #-1 means ignore collisions
 		self.__stabilityFactor = 0.9
 		self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights, self.__stabilityFactor)
 
