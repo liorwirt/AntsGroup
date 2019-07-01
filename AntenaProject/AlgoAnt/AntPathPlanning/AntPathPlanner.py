@@ -11,10 +11,10 @@ from AntenaProject.AlgoAnt.AntPathPlanning.Dijkstra import Dijkstra
 
 # stability factor should be <= 1
 class AntPathPlanner:
-	def __init__(self, safetyRadius: int, cellTypeWeights, stabilityFactor: float):
+	def __init__(self, safetyRadius: int, cellTypeWeights, stabilityFactor: float, currentPosition: Position):
 		self.__SafetyRadius = safetyRadius
 		self.__CellWeights = cellTypeWeights
-		self.__CurrentDestinationPosition = None
+		self.__CurrentDestinationPosition = currentPosition
 		self.__CurrentDestinationPrice = 0
 		self.__StabilityFactor = stabilityFactor
 
@@ -27,8 +27,9 @@ class AntPathPlanner:
 		self.__CurrentDestinationPosition, self.__CurrentDestinationPrice = self.__SelectDestination(PriceMatrix,
 																									 WeightedMatrix,
 																									 startingPosition)
-
-	# calculate a path to the destination
+		# calculate a path to the destination
+		Path = self.__CalculatePathToDestination(startingPosition, self.__CurrentDestinationPosition, PriceMatrix)
+		return Path[0], {}
 
 	def __SelectDestination(self, PriceMatrix, WeightedMatrix, startingPosition):
 		CandidateDestinationsPositions, CandidateDestionationsPrices = self.__CreateCandidateDestinationsList(
@@ -46,7 +47,7 @@ class AntPathPlanner:
 		# decide if we want to switch destinations
 		# we might have arrived at the current one, or the new one is too attractive
 		# lower price means candidate is more attractive
-		if SelectedCandidateDestination == startingPosition or \
+		if self.__CurrentDestinationPosition == startingPosition or \
 				SelectedCandidatePrice < self.__CurrentDestinationPrice * self.__StabilityFactor:
 			return [SelectedCandidateDestination, SelectedCandidatePrice]
 		else:
@@ -60,7 +61,8 @@ class AntPathPlanner:
 		# TODO use np.where, np.array.toList instead of iteration
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
-				if (PriceMatrix[pos_x][pos_y] != np.inf) and (WeightedMatrix[pos_x][pos_y] == NodeStateEnum.UnExplored):
+				if (PriceMatrix[pos_x][pos_y] != np.inf) and (
+						WeightedMatrix[pos_x][pos_y] == self.__CellWeights[NodeStateEnum.UnExplored]):
 					CandidateDestinationsPositions.append(Position(pos_x, pos_y))
 					CandidateDestionationsPrices.append(PriceMatrix[pos_x][pos_y])
 		return CandidateDestinationsPositions, CandidateDestionationsPrices
@@ -94,15 +96,15 @@ class AntPathPlanner:
 
 		return resultMatrix
 
-	def __CalculatePathToDestination(self, startingPosition: Position, DestinationPosition: Position, weightedMatrix):
-		route = []
+	def __CalculatePathToDestination(self, startingPosition: Position, DestinationPosition: Position, PriceMatrix):
+		Path = []
 		currentPosition = DestinationPosition
 		while currentPosition != startingPosition:
-			route.append(currentPosition)
-			currentPosition = self.__FindCheapestNeighbour(weightedMatrix, currentPosition)
-		route.reverse()
+			Path.append(currentPosition)
+			currentPosition = self.__FindCheapestNeighbour(PriceMatrix, currentPosition)
+		Path.reverse()
 
-		return route
+		return Path
 
 	def __FindCheapestNeighbour(self, weightedMatrix, position: Position):
 		[height, width] = weightedMatrix.shape
