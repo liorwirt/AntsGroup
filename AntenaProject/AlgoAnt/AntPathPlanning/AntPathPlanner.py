@@ -22,7 +22,7 @@ class AntPathPlanner:
 		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
 		PriceMatrix = Dijkstra(WeightedMatrix, startingPosition)
 		self.__CurrentDestinationPrice = PriceMatrix[
-			self.__CurrentDestinationPosition.X, self.__CurrentDestinationPosition.Y]
+			self.__CurrentDestinationPosition.Y, self.__CurrentDestinationPosition.X]
 
 		self.__CurrentDestinationPosition, self.__CurrentDestinationPrice = self.__SelectDestination(PriceMatrix,
 																									 WeightedMatrix,
@@ -80,7 +80,7 @@ class AntPathPlanner:
 			for pos_y in range(0, height):
 				resultMatrix[pos_x][pos_y] = self.__CellWeights[worldImage.WorldImage[pos_x][pos_y]]
 
-		resultMatrix[startingPosition.X, startingPosition.Y] = self.__CellWeights[NodeStateEnum.Clear]
+		resultMatrix[startingPosition.Y, startingPosition.X] = self.__CellWeights[NodeStateEnum.Clear]
 
 		# mark a safety radius around scout ants
 		if len(worldImage.Ants()) > 0:
