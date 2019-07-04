@@ -22,7 +22,7 @@ class AntPathPlanner:
 		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
 		PriceMatrix = Dijkstra(WeightedMatrix, startingPosition)
 		self.__CurrentDestinationPrice = PriceMatrix[
-			self.__CurrentDestinationPosition.X, self.__CurrentDestinationPosition.Y]
+			self.__CurrentDestinationPosition.Y, self.__CurrentDestinationPosition.X]
 
 		self.__CurrentDestinationPosition, self.__CurrentDestinationPrice = self.__SelectDestination(PriceMatrix,
 																									 WeightedMatrix,
@@ -37,8 +37,8 @@ class AntPathPlanner:
 
 		# pick a destination based inversely on the price of reaching that destination
 		SumPrices = sum(CandidateDestionationsPrices)
-		CandidateDestionationsProbabilities = [Price / SumPrices for Price in
-											   CandidateDestionationsPrices]
+		CandidateDestionationsProbabilities = [Price / SumPrices
+											   for Price in CandidateDestionationsPrices]
 		SelectedCandidateDestination = np.random.choice(CandidateDestinationsPositions,
 														p=CandidateDestionationsProbabilities)
 		SelectedCandidatePrice = CandidateDestionationsPrices[
@@ -61,10 +61,10 @@ class AntPathPlanner:
 		# TODO use np.where, np.array.toList instead of iteration
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
-				if (PriceMatrix[pos_x][pos_y] != np.inf) and (
-						WeightedMatrix[pos_x][pos_y] == self.__CellWeights[NodeStateEnum.UnExplored]):
+				if (PriceMatrix[pos_y][pos_x] != np.inf) and (
+						WeightedMatrix[pos_y][pos_x] == self.__CellWeights[NodeStateEnum.UnExplored]):
 					CandidateDestinationsPositions.append(Position(pos_x, pos_y))
-					CandidateDestionationsPrices.append(PriceMatrix[pos_x][pos_y])
+					CandidateDestionationsPrices.append(PriceMatrix[pos_y][pos_x])
 		return CandidateDestinationsPositions, CandidateDestionationsPrices
 
 	'''
@@ -78,9 +78,9 @@ class AntPathPlanner:
 
 		for pos_x in range(0, width):
 			for pos_y in range(0, height):
-				resultMatrix[pos_x][pos_y] = self.__CellWeights[worldImage.WorldImage[pos_x][pos_y]]
+				resultMatrix[pos_y][pos_x] = self.__CellWeights[worldImage.WorldImage[pos_y][pos_x]]
 
-		resultMatrix[startingPosition.X, startingPosition.Y] = self.__CellWeights[NodeStateEnum.Clear]
+		resultMatrix[startingPosition.Y, startingPosition.X] = self.__CellWeights[NodeStateEnum.Clear]
 
 		# mark a safety radius around scout ants
 		if len(worldImage.Ants()) > 0:
@@ -115,8 +115,8 @@ class AntPathPlanner:
 		# shuffle so the neighbour is chosen randomly from routes with equal cost
 		random.shuffle(neighbourList)
 		for neighbour in neighbourList:
-			if weightedMatrix[neighbour.X][neighbour.Y] < weight:
-				weight = weightedMatrix[neighbour.X][neighbour.Y]
+			if weightedMatrix[neighbour.Y][neighbour.X] < weight:
+				weight = weightedMatrix[neighbour.Y][neighbour.X]
 				cheapestNeighbour = neighbour
 
 		return cheapestNeighbour
@@ -126,7 +126,7 @@ class AntPathPlanner:
 		if -1 == radius:
 			return inputMatrix
 		if 0 == radius:
-			inputMatrix[position.X, position.Y] = nodeValue
+			inputMatrix[position.Y, position.X] = nodeValue
 			return inputMatrix
 
 		[height, width] = inputMatrix.shape

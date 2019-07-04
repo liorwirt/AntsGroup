@@ -5,14 +5,14 @@ from AntenaProject.Common.AntsBasicStructures.Position import Position
 
 def Dijkstra(InputGrid: np.array, Source: Position):
 	WeightGrid = np.full(InputGrid.shape, np.inf)
-	WeightGrid[Source.X, Source.Y] = 0.0
+	WeightGrid[Source.Y, Source.X] = 0.0
 	VisitedNodes = []
 	# maximum indexes in the matrix
 	Width, Height = InputGrid.shape
 
 	q = []
 	TieBreaker = 0
-	heapq.heappush(q, (WeightGrid[Source.X, Source.Y], TieBreaker, Source))
+	heapq.heappush(q, (WeightGrid[Source.Y, Source.X], TieBreaker, Source))
 	TieBreaker += 1
 	while len(q) > 0:
 		CurrentWeight, _, CurrentNode = heapq.heappop(q)
@@ -22,12 +22,12 @@ def Dijkstra(InputGrid: np.array, Source: Position):
 		VisitedNodes.append(CurrentNode)
 
 		for Neighbour in GetNeighbours(CurrentNode, Width, Height):
-			if InputGrid[Neighbour.X, Neighbour.Y] is np.inf:
+			if InputGrid[Neighbour.Y, Neighbour.X] is np.inf:
 				continue
-			if WeightGrid[Neighbour.X, Neighbour.Y] > CurrentWeight + InputGrid[Neighbour.X, Neighbour.Y]:
-				WeightGrid[Neighbour.X, Neighbour.Y] = CurrentWeight + InputGrid[Neighbour.X, Neighbour.Y]
+			if WeightGrid[Neighbour.Y, Neighbour.X] > CurrentWeight + InputGrid[Neighbour.Y, Neighbour.X]:
+				WeightGrid[Neighbour.Y, Neighbour.X] = CurrentWeight + InputGrid[Neighbour.Y, Neighbour.X]
 
-				heapq.heappush(q, (WeightGrid[Neighbour.X, Neighbour.Y], TieBreaker, Neighbour))
+				heapq.heappush(q, (WeightGrid[Neighbour.Y, Neighbour.X], TieBreaker, Neighbour))
 				TieBreaker += 1
 	return WeightGrid
 
