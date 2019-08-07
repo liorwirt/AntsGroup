@@ -8,25 +8,32 @@ from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.AntsBasicStructures.NodeState import NodeState
 from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 from AntenaProject.SimpleExample.SimpleTotalWorldImage import SimpleTotalWorldImage
+from AntenaProject.Common.AntsBasicStructures.AlgExternalCommand import AlgExternalCommand
+from AntenaProject.AntZTest.Commands.CommandsReciver import CommandsReciver
 import numpy as np
 
 
 
 class SimpleWorldImageProvider(BasicWorldImageProvider):
 
-    def __init__(self,config,maze):
+    def __init__(self,config,maze,commandreciver:CommandsReciver):
         BasicWorldImageProvider.__init__(self,config,maze)
         self.__AntsPlannedStepDict={}
         self.__AntsWorldImage = {}
         self.__ExploredCells=np.zeros(maze.GetDims())
         self.__CombinedMap = np.zeros(maze.GetDims())
         self.__Ants={}
+        self.__CommandsReciver=commandreciver
         self.__VisibilityRange = int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt", "VisibilityRange", 1))
         self.__AllowedMovement = int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt", "AllowedMovement", 1))
+
 
     def ProcessStep(self, ant: BasicAnt, step: AntStep):
             if self._Maze.MayMove(ant.CurrentPosition,step.Position,self.__AllowedMovement):
                 self.__AntsPlannedStepDict[ant.ID]=(ant,step)
+
+
+
 
 
     def GetAntWorldImage(self, ant: BasicAnt) -> BaseSingleAntWorldImage:
@@ -61,6 +68,13 @@ class SimpleWorldImageProvider(BasicWorldImageProvider):
 
         self.__GenrateCombinedMap()
         self.__AntsPlannedStepDict.clear()
+        commands=self.__CommandsReciver.GetCommands()
+        for command in commands:
+            self.__HandleCommand(command)
+
+    def __HandleCommand(self, command: AlgExternalCommand):
+        # TODO HandleCommand
+        pass
     def __GetBB(self,radius:int,position:Position):
         leftMost = max(0, position.X -radius)
         rightMost = min(self._Maze.GetDims()[1] - 1, position.X + radius)

@@ -1,0 +1,3 @@
+D:\Fordana\ProtoC\bin>protoc  --proto_path=d:\Repos\AntsWork\AntenaProject\ICD\ --python_out=d:\Repos\AntsWork\AntenaProject\ICD d:\Repos\AntsWork\AntenaProject\ICD\telemetryMessage.proto
+
+D:\Fordana\ProtoC\bin>protoc  --proto_path=d:\Repos\AntsWork\AntenaProject\ICD\ --python_out=d:\Repos\AntsWork\AntenaProject\ICD d:\Repos\AntsWork\AntenaProject\ICD\uiCommand.proto

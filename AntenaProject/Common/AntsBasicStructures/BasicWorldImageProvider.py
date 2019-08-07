@@ -5,6 +5,7 @@ from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTotalWorldImage
 from AntenaProject.Common.Maze.Facades.MazeFacade import MazeFacade
+from AntenaProject.Common.AntsBasicStructures.AlgExternalCommand import AlgExternalCommand
 from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 
 class BasicWorldImageProvider(ABC):
@@ -26,5 +27,6 @@ class BasicWorldImageProvider(ABC):
     @abstractmethod
     def UpdatePositionsAccordingToMoves(self):
         pass
+
 
 

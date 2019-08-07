@@ -20,6 +20,8 @@ class MetrySenderMetaDataConsumer(BaseAntsMetaDataConsumer):
         self._NodeStateToStr[NodeStateEnum.Obs] = 'wall'
         self._NodeStateToStr[NodeStateEnum.UnExplored] = 'open'
         self._NodeStateToStr[NodeStateEnum.Clear] = 'open'
+        self._ScoutAntType='scout'
+        self._TransAntType='trans'
 
     def ProcessPreRun(self,numberofsteps,maze,aditionaldata):
        pass
@@ -49,6 +51,7 @@ class MetrySenderMetaDataConsumer(BaseAntsMetaDataConsumer):
         msg.ll = 'open'
         msg.rl = 'open'
         msg.bl = 'open'
+        msg.type=self._ScoutAntType
         for node in antworldimage.VisibleNodes:
             if(node.Position==pos_ll):
                 msg.ll=self._GetNodeStr(node.NodeState)

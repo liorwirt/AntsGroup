@@ -19,7 +19,7 @@ from AntenaProject.SimpleExample.SimpleAntEvaluator import SimpleAntEvaluator
 from AntenaProject.AntZTest.AntsRunEvaluation.Enums import EvaluationResponseEnum
 from AntenaProject.AntZTest.AntsRunEvaluation.EvaluationResponseWrapper import EvaluationResponseWrapper
 from AntenaProject.AntZTest.AntsMetaDataConsumer.MetrySenderMetaDataConsumer import MetrySenderMetaDataConsumer
-
+from AntenaProject.AntZTest.Commands.CommandsReciver import CommandsReciver
 import logging
 import time
 from typing import List
@@ -75,8 +75,10 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     performancecounterwritter.AddWritter(DillPerofromanceWriter(configprovider,CreateFolder(configprovider,baseTestFolder,"Performance")))
     evaluationWrapper=EvaluationResponseWrapper(configprovider)
     evaluationWrapper.AddEvaluator(SimpleAntEvaluator(configprovider))
+    commandreciver= CommandsReciver(configprovider)
+    commandreciver.Start()
     return  SimpleAntsContrller(config,maze,metadataconsumer,performancecounterwritter
-                                ,SimpleWorldImageProvider(config,maze),SimpleAntProducer(configprovider,maze.GetEnterence()),evaluationWrapper)
+                                ,SimpleWorldImageProvider(config,maze,commandreciver),SimpleAntProducer(configprovider,maze.GetEnterence()),evaluationWrapper)
 
 
 if __name__ == '__main__':
