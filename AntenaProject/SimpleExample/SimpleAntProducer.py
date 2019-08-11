@@ -43,3 +43,6 @@ class SimpleAntProducer(BasicAntProducer):
             raise StopIteration
         else:
             return self._NextAnt()
+
+    def added_ants(self, num_of_ants_produced, world_image):
+        return []
