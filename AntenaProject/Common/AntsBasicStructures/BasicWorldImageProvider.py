@@ -9,9 +9,9 @@ from AntenaProject.Common.AntsBasicStructures.AlgExternalCommand import AlgExter
 from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
 
 class BasicWorldImageProvider(ABC):
-    def __init__(self,config:BaseConfigProvider,maze:MazeFacade):
-        self._Maze=maze
-        self._Config=config
+    def __init__(self, config: BaseConfigProvider, maze: MazeFacade):
+        self._Maze = maze
+        self._Config = config
     @abstractmethod
     def ProcessStep(self,ant:BasicAnt,step:AntStep):
         pass

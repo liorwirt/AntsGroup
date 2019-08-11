@@ -11,5 +11,17 @@ class BaseSingleAntWorldImage(ABC):
         self._position=pos
     @property
     @abstractmethod
-    def VisibleNodes(self)->List[NodeState]:
+    def VisibleNodes(self) -> List[NodeState]:
+        pass
+
+    @property
+    @abstractmethod
+    def WorldImage(self):
+        pass
+
+    @abstractmethod
+    def Ants(self):
+        """
+        :return: Fellow Ants in the maze, along with their last update time (per ant).
+        """
         pass

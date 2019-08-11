@@ -26,6 +26,7 @@ class BaseMazeParser(ABC):
     @abstractmethod
     def GetExits(self)->coordinates:
         pass
+
     @property
     @abstractmethod
     def GetDims(self)->(int,int):
@@ -35,3 +36,4 @@ class BaseMazeParser(ABC):
     @abstractmethod
     def GetName(self):
         pass
+

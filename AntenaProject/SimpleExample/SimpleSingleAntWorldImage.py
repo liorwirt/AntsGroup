@@ -1,9 +1,31 @@
 from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
-from AntenaProject.Common.AntsBasicStructures.NodeState import NodeState
+from typing import List
+import time
+import numpy as np
 
 class SimpleSingleAntWorldImage(BaseSingleAntWorldImage):
-    def __init__(self,visiblenodes):
-        self.__VisibleNodes=visiblenodes
+    def __init__(self, worldImage: np.array, ants):
+        self.__WorldImage = worldImage
+        self.__Ants = ants
+        self.__AntUpdateTimes = SimpleSingleAntWorldImage.__create_ant_update_times_list(ants)
+
     @property
     def VisibleNodes(self):
-        return self.__VisibleNodes
+        # TODO turn this to a list (np.where, etc)
+        return self.__WorldImage
+
+    @property
+    def WorldImage(self):
+        return self.__WorldImage
+
+    def Ants(self):
+        return self.__Ants
+
+    @staticmethod
+    def __create_ant_update_times_list(ants):
+        now = time.time()
+        ret_list = []
+        for _ in ants:
+            ret_list.append(now)
+
+        return ret_list

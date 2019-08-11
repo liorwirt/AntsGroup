@@ -18,10 +18,6 @@ class MazeGraphSolver(object):
 
 
         self.__BuildGraph()
-        
-
-
-
 
     def GetGraph(self):
         return self._Graph
