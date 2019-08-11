@@ -19,7 +19,7 @@ class UnifiedWorldImageProvider(BasicWorldImageProvider):
 		self.__AntsPlannedStepDict = {}
 		self.__AntsWorldImage = {}
 		self.__ExploredCells = np.zeros(maze.GetDims())
-		self.__CombinedMap = np.zeros(maze.GetDims())
+		self.__CombinedMap = np.full(maze.GetDims(), NodeStateEnum.UnExplored)
 		self.__Ants = {}
 		self.__VisibilityRange = int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt", "VisibilityRange", 1))
 		self.__AllowedMovement = int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt", "AllowedMovement", 1))

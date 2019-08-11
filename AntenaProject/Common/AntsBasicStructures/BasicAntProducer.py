@@ -13,6 +13,9 @@ class BasicAntProducer(ABC):
     @abstractmethod
     def _StopIteration(self)->bool:
         pass
+    @abstractmethod
+    def added_ants(self, num_of_ants_produced, world_image):
+        return []
 
     @abstractmethod
     def _NextAnt(self) -> BasicAnt:

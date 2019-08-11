@@ -10,6 +10,7 @@ class AlgoAntProducer(BasicAntProducer):
         self.__AntsList = []
         self.__Counter = 0
         self.__InitialPosition=initialposition
+        self.__max_num_of_ants = int(config.GetConfigValueForSectionAndKey('SimpleAnt', 'NumToProduce'))
 
     def CreateAnts(self):
         numbertoproduce=int(self._Config.GetConfigValueForSectionAndKey("AlgoAnt", "NumToProduce", 10))
@@ -18,6 +19,15 @@ class AlgoAntProducer(BasicAntProducer):
             ant = AlgoAnt(id, self._Config, startingPosition)
             self.__AntsList.append(ant)
 
+    def added_ants(self, num_of_ants_produced, world_image):
+        ants_to_add = []
+        if not num_of_ants_produced >= self.__max_num_of_ants:
+            startingPosition = Position(x=self.__InitialPosition.X, y=self.__InitialPosition.Y)
+
+            for id in [num_of_ants_produced]:
+                ant = AlgoAnt(id, self._Config, startingPosition)
+                ants_to_add.append(ant)
+        return ants_to_add
 
     def _StopIteration(self) -> bool:
         if(self.__Counter>=len(self.__AntsList)-1):
@@ -28,11 +38,12 @@ class AlgoAntProducer(BasicAntProducer):
     def _NextAnt(self) -> AlgoAnt:
 
         if self._StopIteration():
-            return self.__AntsList[ self.__Counter-1]
+            return self.__AntsList[self.__Counter-1]
 
         ant= self.__AntsList[self.__Counter]
         self.__Counter += 1
         return ant
+
     def __iter__(self):
         return self
 

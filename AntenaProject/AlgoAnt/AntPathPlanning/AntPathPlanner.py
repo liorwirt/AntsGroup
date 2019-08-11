@@ -28,12 +28,17 @@ class AntPathPlanner:
 																									 WeightedMatrix,
 																									 startingPosition)
 		# calculate a path to the destination
+		if startingPosition == self.__CurrentDestinationPosition:
+			return startingPosition, {}
 		Path = self.__CalculatePathToDestination(startingPosition, self.__CurrentDestinationPosition, PriceMatrix)
 		return Path[0], {}
 
 	def __SelectDestination(self, PriceMatrix, WeightedMatrix, startingPosition):
 		CandidateDestinationsPositions, CandidateDestionationsPrices = self.__CreateCandidateDestinationsList(
 			PriceMatrix, WeightedMatrix)
+
+		if len(CandidateDestinationsPositions) == 0:
+			return [startingPosition, 0.0]
 
 		# pick a destination based inversely on the price of reaching that destination
 		SumPrices = sum(CandidateDestionationsPrices)

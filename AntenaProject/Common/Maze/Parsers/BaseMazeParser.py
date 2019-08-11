@@ -36,3 +36,4 @@ class BaseMazeParser(ABC):
     @abstractmethod
     def GetName(self):
         pass
+

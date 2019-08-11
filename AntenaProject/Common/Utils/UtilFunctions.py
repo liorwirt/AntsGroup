@@ -6,7 +6,7 @@ import copy
 
 
 def isInRange(combined_map, radius, position1, position2):
-	return isInRadius(radius, position1, position2) and isLOS(combined_map, position1, position2)
+     return isInRadius(radius, position1, position2) and isLOS(combined_map, position1, position2)
 
 
 def isInRadius(radius, position1, position2):
