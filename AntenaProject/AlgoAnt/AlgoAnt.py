@@ -25,12 +25,14 @@ class AlgoAnt(BasicAnt):
 
 	def __validTransmissionNeighborExists(self, ants, visibleMaze):
 		# TODO neighborRadius should be moved to Params.
-		# neighborRadius = 5.0
-		# for ant in ants:
+		# TODO should turn into a transmission if NEXT step takes you out of bounds
+		# TODO sometimes ants stop inexplicably, needs to be debugged.
+		# neighborRadius = 10.0
+		# for ant in ants.values():
 		# 	if ant.role == AntType.Transmission and \
 		# 			isInRange(visibleMaze, neighborRadius, ant.CurrentPosition, self.CurrentPosition):
 		# 		return True
-		#
+        #
 		# return False
 		return True
 
