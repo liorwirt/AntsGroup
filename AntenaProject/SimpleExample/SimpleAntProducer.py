@@ -10,6 +10,7 @@ class SimpleAntProducer(BasicAntProducer):
         self.__AntsList = []
         self.__Counter = 0
         self.__InitialPosition=initialposition
+        self.__max_num_of_ants = int(config.GetConfigValueForSectionAndKey('SimpleAnt', 'NumToProduce'))
 
     def CreateAnts(self):
         numbertoproduce=int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt","NumToProduce",100))
@@ -45,4 +46,12 @@ class SimpleAntProducer(BasicAntProducer):
             return self._NextAnt()
 
     def added_ants(self, num_of_ants_produced, world_image):
-        return []
+        ants_to_add = []
+        if not num_of_ants_produced >= self.__max_num_of_ants:
+            startingPosition = Position(x=self.__InitialPosition.X, y=self.__InitialPosition.Y)
+
+            for id in [num_of_ants_produced]:
+                ant = SimpleRandomMemoryLessAnt(id, self._Config)
+                ant.UpdatePosition(position=Position(x=self.__InitialPosition.X, y=self.__InitialPosition.Y))
+                ants_to_add.append(ant)
+        return ants_to_add
