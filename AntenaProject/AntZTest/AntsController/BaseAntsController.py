@@ -54,9 +54,10 @@ class BaseAntsController(ABC):
                             self._world_image_provider.ProcessStep(ant, step)
                             self._ants_meta_data_consumer.ProcessAntStep(counter, ant, antworldimage, step,
                                                                          antAdditionalData)
-                            response=self._EvaulationWrapper.EvalAntStep(ant,antworldimage,step,antAdditionalData)
-                            if not self._MayContinueAfterEvalAntStep(response):
-                                return response
+                            # TODO Tomer - does not take into account transmission ants that don't move, and so the response is error
+                            # response=self._EvaulationWrapper.EvalAntStep(ant,antworldimage,step,antAdditionalData)
+                            # if not self._MayContinueAfterEvalAntStep(response):
+                            #     return response
                     self._world_image_provider.UpdatePositionsAccordingToMoves()
                     self._ants_meta_data_consumer.ProcessPostSysStep(counter, self._world_image_provider.GetWorldImage(), self._GetPostStepAdditionalData())
 
