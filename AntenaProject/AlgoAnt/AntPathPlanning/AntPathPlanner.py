@@ -17,6 +17,7 @@ class AntPathPlanner:
 		self.__CurrentDestinationPosition = currentPosition
 		self.__CurrentDestinationPrice = 0
 		self.__StabilityFactor = stabilityFactor
+		self.__priority_positions = {}
 
 	def PlanPath(self, worldImage: BaseSingleAntWorldImage, startingPosition: Position):
 		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
@@ -33,21 +34,35 @@ class AntPathPlanner:
 		Path = self.__CalculatePathToDestination(startingPosition, self.__CurrentDestinationPosition, PriceMatrix)
 		return Path[0], {}
 
+	def __update_priority_location_prices(self, candidate_destination_prices: dict):
+		for priority_position, priority_multiplier in self.__priority_positions.items():
+
+			if priority_position not in candidate_destination_prices.keys():
+				continue
+
+			candidate_destination_prices[priority_position] /= priority_multiplier
+
+
 	def __SelectDestination(self, PriceMatrix, WeightedMatrix, startingPosition):
-		CandidateDestinationsPositions, CandidateDestionationsPrices = self.__CreateCandidateDestinationsList(
+		CandidateDestionationsPrices = self.__CreateCandidateDestinationsList(
 			PriceMatrix, WeightedMatrix)
 
-		if len(CandidateDestinationsPositions) == 0:
+		self.__update_priority_location_prices(CandidateDestionationsPrices)
+
+		if len(CandidateDestionationsPrices) == 0:
 			return [startingPosition, 0.0]
 
 		# pick a destination based inversely on the price of reaching that destination
-		SumPrices = sum(CandidateDestionationsPrices)
-		CandidateDestionationsProbabilities = [Price / SumPrices
-											   for Price in CandidateDestionationsPrices]
-		SelectedCandidateDestination = np.random.choice(CandidateDestinationsPositions,
+		# TODO explore both weight/sum_weights and e^weight/sigma(e^weight) options
+		SumPrices = sum(np.power(np.e, np.ones_like(list(CandidateDestionationsPrices.values())) /
+								 np.array(list(CandidateDestionationsPrices.values()))))
+		# SumPrices = sum(np.ones_like(CandidateDestionationsPrices.values()) /
+		# 				np.array(list(CandidateDestionationsPrices.values())))
+		# SumPrices = sum(CandidateDestionationsPrices)
+		CandidateDestionationsProbabilities = [(np.power(np.e, 1 / Price)) / SumPrices for Price in CandidateDestionationsPrices.values()]
+		SelectedCandidateDestination = np.random.choice(list(CandidateDestionationsPrices.keys()),
 														p=CandidateDestionationsProbabilities)
-		SelectedCandidatePrice = CandidateDestionationsPrices[
-			CandidateDestinationsPositions.index(SelectedCandidateDestination)]
+		SelectedCandidatePrice = CandidateDestionationsPrices[SelectedCandidateDestination]
 
 		# decide if we want to switch destinations
 		# we might have arrived at the current one, or the new one is too attractive
@@ -59,8 +74,7 @@ class AntPathPlanner:
 			return [self.__CurrentDestinationPosition, self.__CurrentDestinationPrice]
 
 	def __CreateCandidateDestinationsList(self, PriceMatrix, WeightedMatrix):
-		CandidateDestinationsPositions = []
-		CandidateDestionationsPrices = []
+		CandidateDestionationsPrices = {}
 		[height, width] = WeightedMatrix.shape
 
 		# TODO use np.where, np.array.toList instead of iteration
@@ -68,9 +82,8 @@ class AntPathPlanner:
 			for pos_y in range(0, height):
 				if (PriceMatrix[pos_y][pos_x] != np.inf) and (
 						WeightedMatrix[pos_y][pos_x] == self.__CellWeights[NodeStateEnum.UnExplored]):
-					CandidateDestinationsPositions.append(Position(pos_x, pos_y))
-					CandidateDestionationsPrices.append(PriceMatrix[pos_y][pos_x])
-		return CandidateDestinationsPositions, CandidateDestionationsPrices
+					CandidateDestionationsPrices[Position(pos_x, pos_y)] = (PriceMatrix[pos_y][pos_x])
+		return CandidateDestionationsPrices
 
 	'''
 	safety radius as Manhattan distance, because it's the number of steps an ant will take
@@ -139,6 +152,6 @@ class AntPathPlanner:
 			inputMatrix = self.__MarkNodeNeighboursWithinRadius(neighbour, radius - 1, inputMatrix, nodeValue)
 
 		return inputMatrix
-	def UpdateRegionWeight(self,position:Position,weight):
-		#TODO update weight
-		pass
+
+	def UpdateRegionWeight(self, position: Position, priority_multiplier):
+		self.__priority_positions[position] = priority_multiplier
