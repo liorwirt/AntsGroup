@@ -22,6 +22,9 @@ class Position(object):
     def __eq__(self, other):
         return   self.__y==other.Y and self.__x==other.X
 
+    def __hash__(self):
+        return hash((self.__x, self.__y))
+
     @staticmethod
     def GetEmptyPosition():
         return Position(-1,-1)
