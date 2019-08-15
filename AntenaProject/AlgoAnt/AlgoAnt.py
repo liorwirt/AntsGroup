@@ -60,5 +60,6 @@ class AlgoAnt(BasicAnt):
 			return self._internalGetStepScout(antworldstate)
 
 		raise RuntimeError(f'Logic error - unexpected self.role {self.role}')
-	def UpdateRegionWeight(self,position:Position,weight):
-		self.__pathPlanner.UpdateRegionWeight(position,weight)
+
+	def UpdateRegionWeight(self, position: Position, priority_multiplier):
+		self.__pathPlanner.UpdateRegionWeight(position, priority_multiplier)
