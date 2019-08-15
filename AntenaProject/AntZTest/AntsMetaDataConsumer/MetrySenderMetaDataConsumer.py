@@ -6,10 +6,12 @@ from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import BaseSingleAntWorldImage
 from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 import socket
+from AntenaProject.AntZTest.AntsMetaDataConsumer.MetaDataToNodeStateInterperter import MetaDataToNodeStateInterperter
 class MetrySenderMetaDataConsumer(BaseAntsMetaDataConsumer):
 
-    def __init__(self, config, ):
+    def __init__(self, config,interperter:MetaDataToNodeStateInterperter ):
         BaseAntsMetaDataConsumer.__init__(self, config)
+        self.__interperter=interperter
         self._Port = int(config.GetConfigValueForSectionAndKey('MulitCastDefinations', 'Port'))
         self._MulticastAddr = config.GetConfigValueForSectionAndKey('MulitCastDefinations', 'IP')
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -52,7 +54,7 @@ class MetrySenderMetaDataConsumer(BaseAntsMetaDataConsumer):
         msg.rl = 'open'
         msg.bl = 'open'
         msg.type=self._ScoutAntType
-        for node in antworldimage.VisibleNodes:
+        for node in self.__interperter.Interpert(antworldimage.VisibleNodes):
             if(node.Position==pos_ll):
                 msg.ll=self._GetNodeStr(node.NodeState)
             if (node.Position == pos_ul):
@@ -71,8 +73,7 @@ class MetrySenderMetaDataConsumer(BaseAntsMetaDataConsumer):
 
 
     def _GetNodeStr(self,nodestate:NodeStateEnum):
-        return 'open'
-        return  self._NodeStateToStr[nodestate]
+       return  self._NodeStateToStr[nodestate]
 
     def ProcessPostSysStep(self,step, worldimage:BaseTotalWorldImage, aditionaldata):
         pass

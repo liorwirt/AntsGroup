@@ -15,7 +15,9 @@ from AntenaProject.AntZTest.AntsMetaDataConsumer.DillAntsMetaDataConsumer import
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DrawingMetaDataConsumer import DrawingMetaDataConsumer
 from AntenaProject.AntZTest.AntsRunEvaluation.EvaluationResponseWrapper import EvaluationResponseWrapper
 from AntenaProject.SimpleExample.SimpleAntEvaluator import SimpleAntEvaluator
-
+from AntenaProject.AntZTest.Commands.CommandsReciver import CommandsReciver
+from AntenaProject.AntZTest.AntsMetaDataConsumer.MetrySenderMetaDataConsumer import MetrySenderMetaDataConsumer
+from AntenaProject.AlgoAnt.AlgoExample.AlgoAntMetaDataToNodeStateInterperter import AlgoAntMetaDataToNodeStateInterperter
 import logging
 import time
 from typing import List
@@ -63,6 +65,7 @@ def CreatLogger(configprovider:BaseConfigProvider,testfolder):
 def GetAntsController(configprovider,maze,baseTestFolder):
     metadataconsumer=AntsMetaDataConsumerWrapper(configprovider)
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
+    metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,AlgoAntMetaDataToNodeStateInterperter()))
     metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)
@@ -70,9 +73,10 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     performancecounterwritter.AddWritter(DillPerofromanceWriter(configprovider,CreateFolder(configprovider,baseTestFolder,"Performance")))
     evaluationWrapper=EvaluationResponseWrapper(configprovider)
     evaluationWrapper.AddEvaluator(SimpleAntEvaluator(configprovider))
-
+    commandreciver = CommandsReciver(configprovider)
+    commandreciver.Start()
     return SimpleAntsContrller(config, maze, metadataconsumer, performancecounterwritter,
-                               UnifiedWorldImageProvider(config, maze),
+                               UnifiedWorldImageProvider(config, maze,commandreciver),
                                AlgoAntProducer(configprovider, maze.GetEnterence()),
                                evaluationWrapper)
 

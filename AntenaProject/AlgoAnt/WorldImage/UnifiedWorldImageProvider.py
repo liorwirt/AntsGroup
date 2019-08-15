@@ -7,15 +7,17 @@ from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
 from AntenaProject.Common.AntsBasicStructures.Position import Position
 from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 from AntenaProject.SimpleExample.SimpleTotalWorldImage import SimpleTotalWorldImage
-
+from AntenaProject.AntZTest.Commands.CommandsReciver import CommandsReciver
+from AntenaProject.Common.AntsBasicStructures.AlgExternalCommand import AlgExternalCommand
+from AntenaProject.Common.AntsBasicStructures.Enums import AlgCommandEnum
 import numpy as np
 import time
 
 
 class UnifiedWorldImageProvider(BasicWorldImageProvider):
 
-	def __init__(self, config, maze):
-		super().__init__(config, maze)
+	def __init__(self, config, maze,commandreciver:CommandsReciver):
+		super().__init__(config, maze, )
 		self.__AntsPlannedStepDict = {}
 		self.__AntsWorldImage = {}
 		self.__ExploredCells = np.zeros(maze.GetDims())
@@ -23,6 +25,12 @@ class UnifiedWorldImageProvider(BasicWorldImageProvider):
 		self.__Ants = {}
 		self.__VisibilityRange = int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt", "VisibilityRange", 1))
 		self.__AllowedMovement = int(self._Config.GetConfigValueForSectionAndKey("SimpleAnt", "AllowedMovement", 1))
+		self.__CommandsToWeights={}
+		self.__CommandsToWeights[AlgCommandEnum.Priority]=int(
+			self._Config.GetConfigValueForSectionAndKey("CommandsWeight", "Priority", 1))
+		self.__CommandsToWeights[AlgCommandEnum.Clear] = int(
+			self._Config.GetConfigValueForSectionAndKey("CommandsWeight", "Clear", 1))
+		self.__CommandsReciver = commandreciver
 
 	def ProcessStep(self, ant: BasicAnt, step: AntStep):
 		if self._Maze.MayMove(ant.CurrentPosition, step.Position, self.__AllowedMovement):
@@ -49,6 +57,13 @@ class UnifiedWorldImageProvider(BasicWorldImageProvider):
 
 		self.__GenerateCombinedMap()
 		self.__AntsPlannedStepDict.clear()
+		commands = self.__CommandsReciver.GetCommands()
+		for command in commands:
+			self.__HandleCommand(command)
+	def __HandleCommand(self, command: AlgExternalCommand):
+		if (command.Command in self.__CommandsToWeights):
+			for ant in self.__Ants.values():
+				ant.UpdateRegionWeight(command.Position,self.__CommandsToWeights[command.Command])
 
 	def __GetBB(self, radius: int, position: Position):
 		leftMost = max(0, position.X - radius)

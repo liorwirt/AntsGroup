@@ -6,7 +6,6 @@ from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt
 from AntenaProject.AntZTest.AntsMetaDataConsumer.LoggingAntsMetaDataConsumer import LoggingAntsMetaDataConsumer
 class AntsMetaDataConsumerWrapper(BaseAntsMetaDataConsumer):
     def __init__(self,config):
-        # TODO add Messege to web
         self.__Consumers=[]
     def AddConsumer(self,consumer:BaseAntsMetaDataConsumer):
         self.__Consumers.append(consumer)

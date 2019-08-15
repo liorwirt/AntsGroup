@@ -139,3 +139,6 @@ class AntPathPlanner:
 			inputMatrix = self.__MarkNodeNeighboursWithinRadius(neighbour, radius - 1, inputMatrix, nodeValue)
 
 		return inputMatrix
+	def UpdateRegionWeight(self,position:Position,weight):
+		#TODO update weight
+		pass
