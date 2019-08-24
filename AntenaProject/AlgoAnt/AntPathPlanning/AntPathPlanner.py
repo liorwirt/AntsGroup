@@ -19,7 +19,7 @@ class AntPathPlanner:
 		self.__StabilityFactor = stabilityFactor
 		self.__priority_positions = {}
 
-	def PlanPath(self, worldImage: BaseSingleAntWorldImage, startingPosition: Position):
+	def PlanPath(self, worldImage: BaseSingleAntWorldImage, startingPosition: Position) :
 		WeightedMatrix = self.__ConvertWorldImageToWeightedMatrix(startingPosition, worldImage)
 		PriceMatrix = Dijkstra(WeightedMatrix, startingPosition)
 		self.__CurrentDestinationPrice = PriceMatrix[
