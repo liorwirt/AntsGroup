@@ -17,7 +17,7 @@ class AlgoAnt(BasicAnt):
         self.__cellWeights = {NodeStateEnum.Clear: CellWeights.ExploredCell,
                               NodeStateEnum.Obs: np.inf,
                               NodeStateEnum.UnExplored: CellWeights.UnexploredCell,
-                              NodeStateEnum.Ant: np.inf}
+                              NodeStateEnum.Ant: CellWeights.ExploredCell}
         self.__safetyRadius = -1  # -1 means ignore collisions
         self.__stabilityFactor = 0.9
         self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights, self.__stabilityFactor,
@@ -27,9 +27,10 @@ class AlgoAnt(BasicAnt):
     def __validTransmissionNeighborExists(self, ants, visibleMaze, NextPosition: Position):
         # TODO sometimes ants stop inexplicably, needs to be debugged.
         for ant in ants.values():
-            if ant.GetRole() == AntType.Transmission and \
-                    isInRange(visibleMaze, self.neighborRadius, ant.CurrentPosition, NextPosition):
-                return True
+            if ant.GetRole() == AntType.Transmission:
+                InRange = isInRange(visibleMaze, self.neighborRadius, ant.CurrentPosition, NextPosition)
+                if InRange:
+                    return True
         return False
 
     def _internalGetStepTransmission(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
@@ -43,7 +44,7 @@ class AlgoAnt(BasicAnt):
 
         if not self.__validTransmissionNeighborExists(fellowAnts, visibleMaze, NextPosition):
             self.SetRole(AntType.Transmission)
-            return self._CurrentPosition, {}
+            return self._internalGetStepTransmission(antworldstate)
 
         return NextPosition, Dict
 
