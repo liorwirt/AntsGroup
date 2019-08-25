@@ -17,7 +17,7 @@ class BaseTotalWorldImage(ABC):
         pass
 
     @abstractmethod
-    def Ants(self) -> List[BasicAnt]:
+    def Ants(self):
         pass
 
     @property
