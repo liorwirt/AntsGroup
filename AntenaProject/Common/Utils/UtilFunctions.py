@@ -50,14 +50,14 @@ def SearchBlockedAlongLine(combined_map, x0, x1, dx, sx, y0, dy, sy):
     while x0 != x1:
         f = f + dy
         if f >= dx:
-            if isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
+            if isBlocked(combined_map[int(y0 + (sy - 1) / 2), int(x0 + (sx - 1) / 2)]):
                 return False
             y0 = y0 + sy
             f = f - dx
-        if f != 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0 + (sy - 1) / 2)]):
+        if f != 0 and isBlocked(combined_map[int(y0 + (sy - 1) / 2), int(x0 + (sx - 1) / 2)]):
             return False
-        if dy == 0 and isBlocked(combined_map[int(x0 + (sx - 1) / 2), int(y0)]) and isBlocked(
-                combined_map[int(x0 + (sx - 1) / 2), int(y0 - 1)]):
+        if dy == 0 and isBlocked(combined_map[int(y0), int(x0 + (sx - 1) / 2)]) and isBlocked(
+                combined_map[int(y0 - 1), int(x0 + (sx - 1) / 2)]):
             return False
         x0 = x0 + sx
     return True
