@@ -11,6 +11,8 @@ from AntenaProject.AntZTest.AntsMetaDataConsumer.AntsMetaDataConsumerWrapper imp
 from AntenaProject.Common.PerfromanceCounting.PerformanceWritterWrapper import PerofromanceWriterWrapper
 from AntenaProject.AntZTest.AntsRunEvaluation.EvaluationResponseWrapper import EvaluationResponseWrapper
 from AntenaProject.AntZTest.AntsRunEvaluation.BaseEvaluationResponse import BaseEvaluationResponse
+from AntenaProject.AntZTest.AntsController.BaseStepEnabler import BaseStepEnabler
+from AntenaProject.AntZTest.AntsController.DummyStepEnabler import DummyStepEnabler
 from AntenaProject.AntZTest.AntsRunEvaluation.ComposedEvaluationResponse import ComposedEvaluationResponse
 def handle_exception(exc_type, exc_value, exc_traceback):
     logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
@@ -20,7 +22,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 class BaseAntsController(ABC):
     def __init__(self, config, maze, metadataconsumer: AntsMetaDataConsumerWrapper,
                  performanceCounterWrapper: PerofromanceWriterWrapper, basicWorldImageProvider: BasicWorldImageProvider,
-                 antsproducer: BasicAntProducer, evaulationWrapper:EvaluationResponseWrapper):
+                 antsproducer: BasicAntProducer, evaulationWrapper:EvaluationResponseWrapper,step_enabler:BaseStepEnabler=DummyStepEnabler):
         sys.excepthook = handle_exception
         self._performance_writter_wrapper = performanceCounterWrapper
         self._Maze = maze
@@ -31,6 +33,7 @@ class BaseAntsController(ABC):
         self._ants_producer = antsproducer
         self._Ants = []
         self._EvaulationWrapper = evaulationWrapper
+        self._step_enabler=step_enabler
 
     def Process(self)->ComposedEvaluationResponse:
         with PerformanceCounter("Process",self._performance_writter_wrapper):
@@ -39,6 +42,8 @@ class BaseAntsController(ABC):
             counter=0
 
             while counter<self._num_of_steps:
+                if not self._step_enabler.ShouldPerformStep():
+                    continue
                 with PerformanceCounter("Colony_Step", self._performance_writter_wrapper):
                     counter+=1
                     self._ants_meta_data_consumer.ProcessPreSysStep(counter,
