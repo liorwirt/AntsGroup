@@ -22,7 +22,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 class BaseAntsController(ABC):
     def __init__(self, config, maze, metadataconsumer: AntsMetaDataConsumerWrapper,
                  performanceCounterWrapper: PerofromanceWriterWrapper, basicWorldImageProvider: BasicWorldImageProvider,
-                 antsproducer: BasicAntProducer, evaulationWrapper:EvaluationResponseWrapper,step_enabler:BaseStepEnabler=DummyStepEnabler):
+                 antsproducer: BasicAntProducer, evaulationWrapper:EvaluationResponseWrapper,step_enabler:BaseStepEnabler=DummyStepEnabler()):
         sys.excepthook = handle_exception
         self._performance_writter_wrapper = performanceCounterWrapper
         self._Maze = maze

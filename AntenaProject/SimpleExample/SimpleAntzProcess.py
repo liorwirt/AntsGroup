@@ -23,8 +23,10 @@ from AntenaProject.AntZTest.Commands.CommandsReciver import CommandsReciver
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DummyMetaDataToNodeStateInterperter import DummyMetaDataToNodeStateInterperter
 import logging
 import time
+import yappi
 from typing import List
 import sys
+
 import os
 #Out main file
 
@@ -83,19 +85,24 @@ def GetAntsController(configprovider,maze,baseTestFolder):
 
 
 if __name__ == '__main__':
+    yappi.start()
+
     config=GetConfig()
     baseTestFolder=format(f"Test_{time.time()}")
     CreatLogger(config,baseTestFolder)
     maze=GetMaze(config)
     testController=GetAntsController(config,maze,baseTestFolder)
     result=testController.Process()
-    if(result.State!=EvaluationResponseEnum.OK and result.State!=EvaluationResponseEnum.Warning):
-        print("Not So good reponse")
-    else:
-        print ("Got a good reponse")
+    # if(result.State!=EvaluationResponseEnum.OK and result.State!=EvaluationResponseEnum.Warning):
+    #     print("Not So good reponse")
+    # else:
+    #     print ("Got a good reponse")
 
-    #genrate AA Report (time....)
-
-
+    yappi.get_func_stats().print_all()
+    yappi.get_thread_stats().print_all()
+    func_stats = yappi.get_func_stats()
+    func_stats.save(format(f'callgrind_{time.time()}.out'), 'CALLGRIND')
+    yappi.stop()
+    yappi.clear_stats()
 
 
