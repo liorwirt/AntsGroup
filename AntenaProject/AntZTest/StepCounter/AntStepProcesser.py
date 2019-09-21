@@ -1,12 +1,13 @@
 from AntenaProject.AntZTest.StepCounter.Enums import DirectionsEnum
 from AntenaProject.AntZTest.StepCounter.Enums import StepEnum
-from AntenaProject.AntZTest.StepCounter.RovbotAntPosition import RobotAntPosition
+from AntenaProject.AntZTest.StepCounter.RobotAntPosition import RobotAntPosition
 class AntStepProcesser(object):
     #Top Left corner is our start
     #North is up
     def __init__(self,config):
         self._config = config
-        self.__initial_direction = (DirectionsEnum)(self._config.GetConfigValueForSectionAndKey('InitialPosition', 'InitialDirection', 1))
+
+        self.__initial_direction = (DirectionsEnum)((int)(self._config.GetConfigValueForSectionAndKey('InitialPosition', 'InitialDirection', 1)))
         self.__initial_position_x = (int)(
             self._config.GetConfigValueForSectionAndKey('InitialPosition', 'InitialPosition_x', 1))
         self.__initial_position_y = (int)(
@@ -24,47 +25,50 @@ class AntStepProcesser(object):
         self._next_turn_right_direction[DirectionsEnum.South] = DirectionsEnum.West
         self._next_turn_right_direction[DirectionsEnum.West] = DirectionsEnum.North
 
-    def process_ant_step(self,antid,step:StepEnum):
+
+    def process_ant_step(self,ant_id,step:StepEnum):
         #create ant and init it!
-        if(antid not in self._positions):
-            self._positions[antid]=RobotAntPosition(direction= self.__initial_direction,X= self.__initial_position_x,Y= self.__initial_position_y)
+        if(ant_id not in self._positions):
+            self._positions[ant_id]=RobotAntPosition(direction= self.__initial_direction,X= self.__initial_position_x,Y= self.__initial_position_y)
         if(step==StepEnum.NoStep):
             return
-        self._update_ant_position(antid,step)
-        self._update_ant_direction(antid, step)
+        self._update_ant_position(ant_id,step)
+        self._update_ant_direction(ant_id, step)
 
-    def get_ant_position_and_direction(self,antid):
+    def is_ant_on_field(self,ant_id):
+        return ant_id  in self._positions
+    def get_ant_position_and_direction(self,ant_id):
         #create ant and init it!
-        if(antid not in self._positions):
+        if(ant_id not in self._positions):
            return (-1,-1,-1)
-        return (self._positions[antid].X,self._positions[antid].Y,self._positions[antid].direction)
+        return (self._positions[ant_id].X,self._positions[ant_id].Y,self._positions[ant_id].direction)
 
-    def _update_ant_position(self,antid,step:StepEnum):
+    def _update_ant_position(self,ant_id,step:StepEnum):
 
-        if (self._positions[antid].direction == DirectionsEnum.East and step==StepEnum.Forward):
-            self._positions[antid].X = self._positions[antid].X + 1
-        if (self._positions[antid].direction == DirectionsEnum.East and step==StepEnum.Back):
-            self._positions[antid].X = self._positions[antid].X - 1
+        if (self._positions[ant_id].direction == DirectionsEnum.East and step==StepEnum.Forward):
+            self._positions[ant_id].X = self._positions[ant_id].X + 1
+        if (self._positions[ant_id].direction == DirectionsEnum.East and step==StepEnum.Back):
+            self._positions[ant_id].X = self._positions[ant_id].X - 1
 
-        if (self._positions[antid].direction == DirectionsEnum.West and step == StepEnum.Back):
-            self._positions[antid].X = self._positions[antid].X + 1
-        if (self._positions[antid].direction == DirectionsEnum.West and step == StepEnum.Forward):
-            self._positions[antid].X = self._positions[antid].X - 1
+        if (self._positions[ant_id].direction == DirectionsEnum.West and step == StepEnum.Back):
+            self._positions[ant_id].X = self._positions[ant_id].X + 1
+        if (self._positions[ant_id].direction == DirectionsEnum.West and step == StepEnum.Forward):
+            self._positions[ant_id].X = self._positions[ant_id].X - 1
 
-        if (self._positions[antid].direction == DirectionsEnum.South and step == StepEnum.Forward):
-            self._positions[antid].Y = self._positions[antid].Y + 1
-        if (self._positions[antid].direction == DirectionsEnum.South and step == StepEnum.Back):
-            self._positions[antid].Y = self._positions[antid].Y - 1
+        if (self._positions[ant_id].direction == DirectionsEnum.South and step == StepEnum.Forward):
+            self._positions[ant_id].Y = self._positions[ant_id].Y + 1
+        if (self._positions[ant_id].direction == DirectionsEnum.South and step == StepEnum.Back):
+            self._positions[ant_id].Y = self._positions[ant_id].Y - 1
 
-        if (self._positions[antid].direction == DirectionsEnum.North and step == StepEnum.Back):
-            self._positions[antid].Y = self._positions[antid].Y+ 1
-        if (self._positions[antid].direction == DirectionsEnum.North and step == StepEnum.Forward):
-            self._positions[antid].Y = self._positions[antid].Y - 1
+        if (self._positions[ant_id].direction == DirectionsEnum.North and step == StepEnum.Back):
+            self._positions[ant_id].Y = self._positions[ant_id].Y+ 1
+        if (self._positions[ant_id].direction == DirectionsEnum.North and step == StepEnum.Forward):
+            self._positions[ant_id].Y = self._positions[ant_id].Y - 1
 
 
-    def _update_ant_direction(self, antid, step: StepEnum):
+    def _update_ant_direction(self, ant_id, step: StepEnum):
         if (step == StepEnum.TurnLeft):
-            self._positions[antid].direction = self._next_turn_left_direction[self._positions[antid].direction]
+            self._positions[ant_id].direction = self._next_turn_left_direction[self._positions[ant_id].direction]
         if (step == StepEnum.TurnRight):
-            self._positions[antid].direction = self._next_turn_right_direction[self._positions[antid].direction]
+            self._positions[ant_id].direction = self._next_turn_right_direction[self._positions[ant_id].direction]
 

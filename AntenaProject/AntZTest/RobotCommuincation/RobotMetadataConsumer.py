@@ -1,4 +1,10 @@
-
+from AntenaProject.AntZTest.StepCounter.Enums import DirectionsEnum
+from AntenaProject.AntZTest.StepCounter.Enums import StepEnum
+from AntenaProject.AntZTest.StepCounter.RobotAntPosition import RobotAntPosition
+from AntenaProject.AntZTest.StepCounter.AntStepProcesser import AntStepProcesser
+from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
+from AntenaProject.Common.AntsBasicStructures.Position import Position
+from AntenaProject.AntZTest.StepCounter.TranslateStep import TranslateStep
 
 from AntenaProject.AntZTest.AntsMetaDataConsumer.BaseAntsMetaDataConsumer import BaseAntsMetaDataConsumer
 from AntenaProject.Common.AntsBasicStructures.BaseTotalWorldImage import BaseTotalWorldImage
@@ -9,12 +15,21 @@ from AntenaProject.Common.AntsBasicStructures.BaseSingleAntWorldImage import Bas
 from AntenaProject.Common.AntsBasicStructures.Enums import NodeStateEnum
 from AntenaProject.AntZTest.RobotCommuincation.ServerComm import ServerComm
 from AntenaProject.Common.AntsBasicStructures.AntStep import AntStep
+import logging
 class RobotMetadataConsumer(BaseAntsMetaDataConsumer):
 
-    def __init__(self, config,server_comm:ServerComm):
+    def __init__(self, config,server_comm:ServerComm,ants_step_processor:AntStepProcesser):
         BaseAntsMetaDataConsumer.__init__(self, config)
         self.__server_comm=server_comm
+        self._ants_step_processor=ants_step_processor
+        self.__ants_step_transelator=TranslateStep(config,ants_step_processor)
 
+        self._movement_translation = {}
+        self._movement_translation[StepEnum.Forward] = 'f1'
+        self._movement_translation[StepEnum.Back] = 'b1'
+        self._movement_translation[StepEnum.TurnLeft] = 'l'
+        self._movement_translation[StepEnum.TurnRight] = 'r'
+        self._movement_translation[StepEnum.NoStep]='s'
 
 
     def ProcessPreRun(self,numberofsteps,maze,aditionaldata):
@@ -24,33 +39,20 @@ class RobotMetadataConsumer(BaseAntsMetaDataConsumer):
         pass
 
     def ProcessAntStep(self,step,ant:BasicAnt,antworldimage:BaseSingleAntWorldImage,move:AntStep,aditionaldata):
-        robot_step=self.__GetRobotStep(ant,move)
-        self.__server_comm.perform_step(ant_id=str(ant.ID),steps=robot_step)
-
-    def __GetRobotStep(self,ant:BasicAnt,move:AntStep):
-        robot_step=[]
-        robot_step.append('s')
-        current_position=ant.CurrentPosition
-        next_position=move.Position
-        #TODO fix this logic may be problematic-we are under the assumption of direction of axis and no walls- will fix in next version
-        if(current_position.X!=next_position.X):
-            if(current_position.X > next_position.X):
-                robot_step.append('b1')
-            if (current_position.Y < next_position.Y):
-                robot_step.append('f1')
-
-        if (current_position.Y != next_position.Y):
-            if (current_position.Y > next_position.Y):
-                robot_step.append('r')
-                robot_step.append('f1')
-            if (current_position.Y < next_position.Y):
-                robot_step.append('l')
-                robot_step.append('f1')
-        return robot_step
-
-
-
-
+        movements=self.__ants_step_transelator.TranlateStep(move)
+        for movement in movements:
+            robot_step=self._movement_translation[movement]
+            logging.info(format(
+                f"Sending to ant {ant.ID} step {robot_step} "))
+            command_processed=self.__server_comm.perform_step(ant_id=str(ant.ID), step=robot_step)
+            if not command_processed:
+                logging.error(format(
+                    f"Command to ant {ant.ID} step {robot_step} was not acked!!!! "))
+                #TODO-what to do now?
+            else:
+                logging.info(format(
+                    f"Command to ant {ant.ID} step {robot_step} was  acked  "))
+                self._ants_step_processor.process_ant_step(ant_id=ant.ID,step=movement)
 
 
 

@@ -14,6 +14,26 @@ class StepCounter_tests(TestCase):
         processor = AntStepProcesser(config)
         position_data=processor.get_ant_position_and_direction(99)
         self.assertTrue(position_data[0]==-1 and position_data[1]==-1 and position_data[2]==-1)
+
+    def test__ant_not_on_field(self):
+        config = DictionaryConfigProvider()
+        config.SetValue('InitialPosition', 'InitialDirection', 0)
+        config.SetValue('InitialPosition', 'InitialPosition_x', 1)
+        config.SetValue('InitialPosition', 'InitialPosition_y', 1)
+        processor = AntStepProcesser(config)
+        is_on_field = processor.is_ant_on_field(99)
+        self.assertTrue(not is_on_field)
+
+    def test__ant_on_field(self):
+        config = DictionaryConfigProvider()
+        config.SetValue('InitialPosition', 'InitialDirection', 0)
+        config.SetValue('InitialPosition', 'InitialPosition_x', 1)
+        config.SetValue('InitialPosition', 'InitialPosition_y', 1)
+        processor = AntStepProcesser(config)
+        processor.process_ant_step(99, StepEnum.NoStep)
+        is_on_field = processor.is_ant_on_field(99)
+        self.assertTrue( is_on_field)
+
     def test__initial_ant(self):
         config = DictionaryConfigProvider()
         config.SetValue('InitialPosition', 'InitialDirection', 0)

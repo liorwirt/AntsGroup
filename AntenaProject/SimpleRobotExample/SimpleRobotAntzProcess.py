@@ -24,6 +24,7 @@ from AntenaProject.AntZTest.AntsController.TimedStepEnabler import TimedStepEnab
 from AntenaProject.AntZTest.AntsMetaDataConsumer.DummyMetaDataToNodeStateInterperter import DummyMetaDataToNodeStateInterperter
 from AntenaProject.AntZTest.RobotCommuincation.ServerComm import ServerComm
 from AntenaProject.AntZTest.RobotCommuincation.RobotMetadataConsumer import RobotMetadataConsumer
+from AntenaProject.AntZTest.StepCounter.AntStepProcesser import AntStepProcesser
 import logging
 import time
 from typing import List
@@ -71,7 +72,8 @@ def CreatLogger(configprovider:BaseConfigProvider,testfolder):
 def GetAntsController(configprovider,maze,baseTestFolder):
     metadataconsumer=AntsMetaDataConsumerWrapper(configprovider)
     server_comm=ServerComm(config)
-    metadataconsumer.AddConsumer(RobotMetadataConsumer(config,server_comm))
+    ant_step_processer=AntStepProcesser(config)
+    metadataconsumer.AddConsumer(RobotMetadataConsumer(config,server_comm,ant_step_processer))
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
     metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
     metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,DummyMetaDataToNodeStateInterperter()))
