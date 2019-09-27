@@ -1,10 +1,19 @@
 from enum import IntEnum
 
+
 class NodeStateEnum(IntEnum):
-    UnExplored=1,
-    Clear=0,
-    Obs=2,
-    Ant=3,
+    Clear = 0,
+    UnExplored = 1,
+    Obs = 2,
+    Ant = 3,
+
+
+class ExpandedNodeStateEnum(IntEnum):
+    Clear = 0,
+    UnExplored = 1,
+    Obs = 2,
+    ScoutAnt = 3,
+    TransmissionAnt = 4,
 
 
 class AntType(IntEnum):
@@ -18,7 +27,7 @@ class CellWeights:
 
 
 class AlgCommandEnum(IntEnum):
-    Clear=0,
-    NotRelevent=1,
-    Blocked=2,
-    Priority=3
+    Clear = 0,
+    NotRelevent = 1,
+    Blocked = 2,
+    Priority = 3

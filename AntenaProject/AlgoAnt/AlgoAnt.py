@@ -8,58 +8,60 @@ from AntenaProject.Common.Utils.UtilFunctions import isInRange
 
 class AlgoAnt(BasicAnt):
 
-	def __init__(self, id: int, config, position: Position):
-		super().__init__(id, config)
-		super().UpdatePosition(position)
-		self.role = AntType.Scout
-		# TODO get cell weights from configuration.
-		self.__cellWeights = {NodeStateEnum.Clear: CellWeights.ExploredCell,
-							  NodeStateEnum.Obs: np.inf,
-							  NodeStateEnum.UnExplored: CellWeights.UnexploredCell,
-							  NodeStateEnum.Ant: np.inf}
-		# TODO get safety radius and stabilityFactor from configuration.
-		self.__safetyRadius = -1  # -1 means ignore collisions
-		self.__stabilityFactor = 0.9
-		self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights, self.__stabilityFactor,
-											self.CurrentPosition)
+    def __init__(self, id: int, config, position: Position):
+        super().__init__(id, config)
+        super().UpdatePosition(position)
+        self.SetRole(AntType.Scout)
 
-	def __validTransmissionNeighborExists(self, ants, visibleMaze):
-		# TODO neighborRadius should be moved to Params.
-		# TODO should turn into a transmission if NEXT step takes you out of bounds
-		# TODO sometimes ants stop inexplicably, needs to be debugged.
-		# neighborRadius = 10.0
-		# for ant in ants.values():
-		# 	if ant.role == AntType.Transmission and \
-		# 			isInRange(visibleMaze, neighborRadius, ant.CurrentPosition, self.CurrentPosition):
-		# 		return True
-        #
-		# return False
-		return True
+        # TODO get parameters  from configuration.
+        self.__cellWeights = {NodeStateEnum.Clear: CellWeights.ExploredCell,
+                              NodeStateEnum.Obs: np.inf,
+                              NodeStateEnum.UnExplored: CellWeights.UnexploredCell,
+                              NodeStateEnum.Ant: CellWeights.ExploredCell}
+        self.__safetyRadius = -1  # -1 means ignore collisions
+        self.__stabilityFactor = 0.9
+        self.__pathPlanner = AntPathPlanner(self.__safetyRadius, self.__cellWeights, self.__stabilityFactor,
+                                            self.CurrentPosition)
+        self.neighborRadius = 10.0
 
+    def __validTransmissionNeighborExists(self, ants, visibleMaze, NextPosition: Position):
+        # TODO sometimes ants stop inexplicably, needs to be debugged.
+        for ant in ants.values():
+            if ant.GetRole() == AntType.Transmission:
+                InRange = isInRange(visibleMaze, self.neighborRadius, ant.CurrentPosition, NextPosition)
+                if InRange:
+                    return True
+        return False
 
-	def _internalGetStepTransmission(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
-		return self._CurrentPosition, {}
+    def _internalGetStepTransmission(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
+        return self._CurrentPosition, {}
 
+    def _internalGetStepScout(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
+        fellowAnts = antworldstate.Ants()
+        visibleMaze = antworldstate.VisibleNodes
 
-	def _internalGetStepScout(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
-		fellowAnts = antworldstate.Ants()
-		visibleMaze = antworldstate.VisibleNodes
+        NextPosition, Dict = self.__pathPlanner.PlanPath(antworldstate, self._CurrentPosition)
 
-		if not self.__validTransmissionNeighborExists(fellowAnts, visibleMaze):
-			self.role = AntType.Transmission
-			return self._CurrentPosition, {}
+        if not self.__validTransmissionNeighborExists(fellowAnts, visibleMaze, NextPosition):
+            self.SetRole(AntType.Transmission)
+            return self._internalGetStepTransmission(antworldstate)
 
-		return self.__pathPlanner.PlanPath(antworldstate, self._CurrentPosition)
+        return NextPosition, Dict
 
+    def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
+        if self.GetRole() == AntType.Transmission:
+            return self._internalGetStepTransmission(antworldstate)
 
-	def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage) -> Tuple[Position, Dict]:
-		if self.role == AntType.Transmission:
-			return self._internalGetStepTransmission(antworldstate)
+        elif self.GetRole() == AntType.Scout:
+            return self._internalGetStepScout(antworldstate)
 
-		elif self.role == AntType.Scout:
-			return self._internalGetStepScout(antworldstate)
+        raise RuntimeError(f'Logic error - unexpected self.role {self.role}')
 
-		raise RuntimeError(f'Logic error - unexpected self.role {self.role}')
+    def UpdateRegionWeight(self, position: Position, priority_multiplier):
+        self.__pathPlanner.UpdateRegionWeight(position, priority_multiplier)
 
-	def UpdateRegionWeight(self, position: Position, priority_multiplier):
-		self.__pathPlanner.UpdateRegionWeight(position, priority_multiplier)
+    def GetRole(self):
+        return self._role
+
+    def SetRole(self, NewRole):
+        self._role = NewRole
