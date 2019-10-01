@@ -39,6 +39,19 @@ class MazeFacade(object):
 	def IsObs(self, position: Position) -> bool:
 		return self.__MazeParser.IsObs(position)
 
+
+	def is_in_bounds(self, position: Position) -> bool:
+		if position.Y<0 or position.X<0:
+			return False
+		width, height = self.__MazeParser.GetDims()
+		if position.Y>height-1 or position.X>width-1:
+			return False
+
+		return True
+
+
+
+
 	@property
 	def ConnectivityGraph(self):
 		return self.__Graph

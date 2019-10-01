@@ -1,6 +1,7 @@
 from AntenaProject.AntZTest.StepCounter.Enums import DirectionsEnum
 from AntenaProject.AntZTest.StepCounter.Enums import StepEnum
 from AntenaProject.AntZTest.StepCounter.RobotAntPosition import RobotAntPosition
+from AntenaProject.Common.AntsBasicStructures.Position import Position
 class AntStepProcesser(object):
     #Top Left corner is our start
     #North is up
@@ -37,6 +38,8 @@ class AntStepProcesser(object):
 
     def is_ant_on_field(self,ant_id):
         return ant_id  in self._positions
+    def initial_position(self)->Position:
+        return Position(x=self.__initial_position_x,y=self.__initial_position_y)
     def get_ant_position_and_direction(self,ant_id):
         #create ant and init it!
         if(ant_id not in self._positions):

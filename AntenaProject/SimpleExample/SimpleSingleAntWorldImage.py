@@ -4,15 +4,16 @@ import time
 import numpy as np
 
 class SimpleSingleAntWorldImage(BaseSingleAntWorldImage):
-    def __init__(self, worldImage: np.array, ants):
+    def __init__(self, worldImage: np.array,ants,visible_nodes=np.array):
         self.__WorldImage = worldImage
+        self.__visible_nodes=visible_nodes
         self.__Ants = ants
         self.__AntUpdateTimes = SimpleSingleAntWorldImage.__create_ant_update_times_list(ants)
 
     @property
     def VisibleNodes(self):
         # TODO turn this to a list (np.where, etc)
-        return self.__WorldImage
+        return self.__visible_nodes
 
     @property
     def WorldImage(self):

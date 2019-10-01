@@ -43,7 +43,7 @@ class FileMazeParser(BaseMazeParser):
             raise Exception(format(f"file {filename} no enterence found"))
         if len(enterindexs[0])>1:
             raise Exception(format(f"file {filename} several enterences found"))
-        self.__Enterence= Position(enterindexs[0][0], enterindexs[1][0])
+        self.__Enterence= Position(enterindexs[1][0], enterindexs[0][0])
 
         exitindexs= np.where(map_planning =='F')
         if len(exitindexs[0]) == 0:
@@ -51,7 +51,7 @@ class FileMazeParser(BaseMazeParser):
         exittupels = list(zip(exitindexs[0], exitindexs[1]))
 
         for tup in exittupels:
-            self.__Exits.append(Position(tup[0],tup[1]))
+            self.__Exits.append(Position(tup[1],tup[0]))
 
 
         ''' Takes the matrix and converts it into a float array '''

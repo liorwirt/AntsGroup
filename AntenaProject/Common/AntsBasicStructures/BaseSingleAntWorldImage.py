@@ -5,6 +5,7 @@ from AntenaProject.Common.AntsBasicStructures.Position import Position
 from typing import List
 
 
+
 class BaseSingleAntWorldImage(ABC):
     def __init__(self,id,pos:Position):
         self._id=id
