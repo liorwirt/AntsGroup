@@ -27,7 +27,7 @@ from AntenaProject.AntZTest.StepCounter.AntStepProcesser import AntStepProcesser
 from AntenaProject.MeshAnts.connectivty_calculator import connectivty_calculator
 from typing import List,Tuple
 from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
-from AntenaProject.SimpleExample.SimpleAntsController import SimpleAntsContrller
+from AntenaProject.Robot_Mesh_Controller.SimpleMeshAntsController import SimpleMeshAntsContrller
 import logging
 import time
 from typing import List
@@ -75,7 +75,7 @@ def CreatLogger(configprovider:BaseConfigProvider,testfolder):
 def GetAntsController(configprovider,maze,baseTestFolder):
     metadataconsumer=AntsMetaDataConsumerWrapper(configprovider)
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
-    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
+    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
     metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,DummyMetaDataToNodeStateInterperter()))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)
@@ -87,13 +87,13 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     commandreciver= CommandsReciver(configprovider)
     commandreciver.Start()
     connectivty=connectivty_calculator(config=configprovider,maze_facade=maze)
-    return  SimpleAntsContrller(config,
+    return  SimpleMeshAntsContrller(config,
                                 maze,
                                 metadataconsumer,
                                 performancecounterwritter,
                                 MeshWorldImageProvider(config,maze,commandreciver),
                                 SimpleMeshAntProducer(configprovider,maze.GetEnterence(),maze=maze,connectivty_calculator=connectivty,number_to_produce=6),
-                                evaluationWrapper)
+                                evaluationWrapper,connectivty)
 
 
 if __name__ == '__main__':

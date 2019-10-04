@@ -29,7 +29,7 @@ class SimpleMeshAntProducer(BasicAntProducer):
 
 
     def _StopIteration(self) -> bool:
-        if(self.__Counter>=len(self.__AntsList)-1):
+        if(self.__Counter>=len(self.__AntsList)):
 
             return True
         return False

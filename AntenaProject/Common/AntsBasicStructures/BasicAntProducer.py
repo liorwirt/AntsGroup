@@ -23,7 +23,6 @@ class BasicAntProducer(ABC):
 
     def __iter__(self):
         return self
-
     def __next__(self)->BasicAnt:
         if self._StopIteration():
             raise StopIteration
