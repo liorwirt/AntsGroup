@@ -20,6 +20,8 @@ class mesh_ant(BasicAnt):
         self.__old_choice=[]
         self.__path_builder=path_builder(config,maze)
         self.__explored_map=np.ones(maze.GetDims())
+        self.__last_steps=[]
+        self.__last_steps_depth=2
 
 
     def _internalGetStep(self, antworldstate: BaseSingleAntWorldImage):
@@ -27,9 +29,13 @@ class mesh_ant(BasicAnt):
         for result in path_resutltes:
             #return first path we get-grreedy
             if not self.__was_node_explored(antworldstate,result):
+                if self.CurrentPosition==result:
+                    continue
                 #first tep is origin
                 next_step=path_resutltes[result][1]
-                if not  self.__connectivty_calculator.does_move_affect_connectivity(next_position=next_step,ant_id=self._ID,world_image=antworldstate):
+                if not  self.__connectivty_calculator.does_move_affect_connectivity(next_position=next_step,ant_id=self._ID,world_image=antworldstate) \
+                        and not self.__is_step_in_last_steps(next_step):
+                    self.__update_last_steps(next_step)
                     print(format(f"for ant {self._ID} node {result} is was not explored so go to it with step {next_step}"))
                     return next_step, {}
                 else:
@@ -37,7 +43,15 @@ class mesh_ant(BasicAnt):
 
             print(format(f"for ant {self._ID} node {result} is already explored so leave it at that!!!!"))
         return self.CurrentPosition, {}
-
+    def __is_step_in_last_steps(self,next_step:Position)->bool:
+        for step in self.__last_steps:
+            if next_step==step:
+                return True
+        return False
+    def __update_last_steps(self,next_step:Position):
+        if len(self.__last_steps)==self.__last_steps_depth:
+            self.__last_steps.pop(0)
+        self.__last_steps.append(next_step)
     def __get_obs_on_path_grpah(self, antworldstate: BaseSingleAntWorldImage)->List[Position]:
         obstacels = []
         for node in antworldstate.VisibleNodes:

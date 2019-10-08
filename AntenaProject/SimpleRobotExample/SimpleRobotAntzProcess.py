@@ -75,7 +75,7 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     ant_step_processer=AntStepProcesser(config)
     metadataconsumer.AddConsumer(RobotMetadataConsumer(config,server_comm,ant_step_processer))
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
-    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
+    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
     metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,DummyMetaDataToNodeStateInterperter()))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)

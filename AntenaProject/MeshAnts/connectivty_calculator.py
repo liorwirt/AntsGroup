@@ -1,6 +1,8 @@
 from AntenaProject.Common.AntsBasicStructures.BasicAnt import BasicAnt, Position
 from AntenaProject.Common.Maze.Facades.MazeFacade import MazeFacade
 from typing import List
+from copy import deepcopy
+from shapely.geometry import Point, LineString
 
 import networkx as nx
 import numpy as np
@@ -13,13 +15,14 @@ class connectivty_calculator():
 
     def does_move_affect_connectivity(self,next_position:Position,ant_id,world_image)->bool:
 
-        if(len(world_image.Ants())<2):
+        # add enterence
+        ants = world_image.Ants()
+        if (len(world_image.Ants()) == 0):
             return False
+        if(len(world_image.Ants())==1):
+            return not self.__is_ant_connected_to_start_poisition(list(ants.values())[0])
         currnet_graph=nx.Graph()
 
-         #add enterence
-        ants=world_image.Ants()
-        ants[ self.__enterence_key]= self.__enterence_position
         for outer_ant in ants:
             currnet_graph.add_node(outer_ant)
             for inner_ant in ants:
@@ -28,6 +31,18 @@ class connectivty_calculator():
                 los_points=self._los_calcuation_function(ants[outer_ant],ants[inner_ant])
                 if self.__is_los_according_to_constraiants(ants[outer_ant],ants[inner_ant],los_points):
                     currnet_graph.add_edge(outer_ant,inner_ant)
+
+        # eterence
+        new_ants = deepcopy(ants)
+        new_ants[ant_id] = next_position
+        enterence_connection=False
+        for ant_position in new_ants.values():
+            if self.__is_ant_connected_to_start_poisition(ant_position):
+                enterence_connection=True
+
+        if not enterence_connection:
+            print("movment causes enterence connection break up")
+            return True
 
         #test against new position
         for outer_ant in ants:
@@ -39,12 +54,18 @@ class connectivty_calculator():
             else:
                 if(currnet_graph.has_edge(outer_ant, ant_id)):
                     currnet_graph.remove_edge(outer_ant, ant_id)
+
+
+
         is_connected=nx.is_connected(currnet_graph)
         return not is_connected
 
 
 
 
+    def __is_ant_connected_to_start_poisition(self,ant_position:Position)->bool:
+        los_points = self._los_calcuation_function(ant_position,self.__enterence_position)
+        return self.__is_los_according_to_constraiants(ant_position, self.__enterence_position, los_points)
 
 
     def __is_los_according_to_constraiants(self,pFrom: Position, pTo: Position,los_points:List[Position])->bool:
@@ -64,6 +85,10 @@ class connectivty_calculator():
 
     def _los_calcuation_function(self,pFrom: Position, pTo: Position)->List[Position]:
         return self._bres(pFrom,pTo)
+
+
+
+
 
     def _bres(self, pFrom: Position, pTo: Position)->List[Position]:
         end = False

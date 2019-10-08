@@ -4,7 +4,7 @@ from AntenaProject.Common.Maze.Parsers.FileMazeParser import FileMazeParser
 from AntenaProject.Common.Maze.Parsers.DIYMazeParser import DIYMazeParser
 from AntenaProject.Robot_Mesh_Controller.RobotMeshAntProducer import RobotMeshAntProducer
 
-from AntenaProject.SimpleExample.SimpleWorldImageProvider import SimpleWorldImageProvider
+from AntenaProject.Robot_Mesh_Controller.MeshWorldImageProvider import MeshWorldImageProvider
 from AntenaProject.Common.Config.IniConfigProvider import IniConfigProvider
 from AntenaProject.Common.PerfromanceCounting.PerformanceWritterWrapper import PerofromanceWriterWrapper
 from AntenaProject.Common.PerfromanceCounting.LoggerPerofromanceWriter import LoggerPerofromanceWriter
@@ -27,7 +27,7 @@ from AntenaProject.AntZTest.StepCounter.AntStepProcesser import AntStepProcesser
 from AntenaProject.MeshAnts.connectivty_calculator import connectivty_calculator
 from typing import List,Tuple
 from AntenaProject.Common.Config.BaseConfigProvider import BaseConfigProvider
-from AntenaProject.SimpleExample.SimpleAntsController import SimpleAntsContrller
+from AntenaProject.Robot_Mesh_Controller.SimpleMeshAntsController import SimpleMeshAntsContrller
 import logging
 import time
 from typing import List
@@ -78,7 +78,7 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     ant_step_processer=AntStepProcesser(config)
     metadataconsumer.AddConsumer(RobotMetadataConsumer(config,server_comm,ant_step_processer))
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
-    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config))
+    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
     metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,DummyMetaDataToNodeStateInterperter()))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)
@@ -90,13 +90,13 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     commandreciver= CommandsReciver(configprovider)
     commandreciver.Start()
     connectivty=connectivty_calculator(config=configprovider,maze_facade=maze)
-    return  SimpleAntsContrller(config,
+    return  SimpleMeshAntsContrller(config,
                                 maze,
                                 metadataconsumer,
                                 performancecounterwritter,
-                                SimpleWorldImageProvider(config,maze,commandreciver),
+                                MeshWorldImageProvider(config,maze,commandreciver),
                                 RobotMeshAntProducer(configprovider,maze.GetEnterence(),server_comm=server_comm,maze=maze,connectivty_calculator=connectivty),
-                                evaluationWrapper)
+                                evaluationWrapper,connectivty)
 
 
 if __name__ == '__main__':
@@ -106,10 +106,7 @@ if __name__ == '__main__':
     maze=GetMaze(config)
     testController=GetAntsController(config,maze,baseTestFolder)
     result=testController.Process()
-    if(result.State!=EvaluationResponseEnum.OK and result.State!=EvaluationResponseEnum.Warning):
-        print("Not So good reponse")
-    else:
-        print ("Got a good reponse")
+
 
     #genrate AA Report (time....)
 
