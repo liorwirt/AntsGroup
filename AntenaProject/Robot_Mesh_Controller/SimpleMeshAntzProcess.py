@@ -75,7 +75,7 @@ def CreatLogger(configprovider:BaseConfigProvider,testfolder):
 def GetAntsController(configprovider,maze,baseTestFolder):
     metadataconsumer=AntsMetaDataConsumerWrapper(configprovider)
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
-    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
+   # metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
     metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,DummyMetaDataToNodeStateInterperter()))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)

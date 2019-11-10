@@ -75,7 +75,7 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     ant_step_processer=AntStepProcesser(config)
     metadataconsumer.AddConsumer(RobotMetadataConsumer(config,server_comm,ant_step_processer))
     metadataconsumer.AddConsumer(LoggingAntsMetaDataConsumer(config))
-    metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
+    #metadataconsumer.AddConsumer(DrawingMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Drawing_Maze"),maze.GetEnterence()))
     metadataconsumer.AddConsumer(MetrySenderMetaDataConsumer(config,DummyMetaDataToNodeStateInterperter()))
     metadataconsumer.AddConsumer(DillAntsMetaDataConsumer(config,CreateFolder(configprovider,baseTestFolder,"Data")))
     performancecounterwritter=PerofromanceWriterWrapper(configprovider)
@@ -87,7 +87,7 @@ def GetAntsController(configprovider,maze,baseTestFolder):
     commandreciver= CommandsReciver(configprovider)
     commandreciver.Start()
     return  SimpleAntsContrller(config,maze,metadataconsumer,performancecounterwritter
-                                ,SimpleWorldImageProvider(config,maze,commandreciver),RobotAntProducer(configprovider,maze.GetEnterence(),server_comm=server_comm),evaluationWrapper,step_enabler=step_enabler)
+                                ,SimpleWorldImageProvider(config,maze,commandreciver),RobotAntProducer(configprovider,maze.GetEnterence(),server_comm=server_comm),evaluationWrapper)
 
 
 if __name__ == '__main__':

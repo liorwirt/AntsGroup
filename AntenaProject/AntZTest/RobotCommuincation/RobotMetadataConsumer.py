@@ -45,6 +45,7 @@ class RobotMetadataConsumer(BaseAntsMetaDataConsumer):
             logging.info(format(
                 f"Sending to ant {ant.ID} step {robot_step} "))
             command_processed=self.__server_comm.perform_step(ant_id=str(ant.ID), step=robot_step)
+            logging.info("Step performed!!!!!")
             if not command_processed:
                 logging.error(format(
                     f"Command to ant {ant.ID} step {robot_step} was not acked!!!! "))

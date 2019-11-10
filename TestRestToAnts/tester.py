@@ -21,7 +21,7 @@ def startants():
 
         if resp.status_code != 200:
             raise Exception('POST /tasks/ {}'.format(resp.status_code))
-        print('Created task. ID: {}'.format(resp.json()["id"]))
+        # print('Created task. ID: {}'.format(resp.json()["id"]))
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
         print ("received message:", data)
 
